@@ -736,11 +736,16 @@ function render(d) {
     if (pd) pd.remove();
   }
 
-  // Net sheet
-  const today = new Date(); today.setHours(0, 0, 0, 0);
+  // Net sheet — taxes, insurance and HOA are prorated for the REMAINDER of the
+  // calendar year from the closing date, on a 360-day (12 × 30) basis. A 10/1
+  // close leaves Oct+Nov+Dec = 90 days = exactly 3 months.
   const close = s.closeDate ? new Date(s.closeDate + "T00:00:00") : null;
-  const days = close ? Math.max(0, Math.round((close - today) / 86400000)) : 0;
-  $id("net-sub").textContent = `Estimated proceeds at each tier · close ${close ? close.toLocaleDateString("en-US") : "TBD"} (${days} days) · 360-day-year prorations · payoff ${fmt$(s.payoff)}`;
+  const cm = close ? close.getMonth() + 1 : 0;   // 1–12
+  const cd = close ? close.getDate() : 1;
+  const days = close ? Math.max(0, (12 - cm) * 30 + (31 - cd)) : 0;
+  const mos = days / 30;
+  const proLabel = Number.isInteger(mos) ? `${mos} mo` : `${days} days`;
+  $id("net-sub").textContent = `Estimated proceeds at each tier · close ${close ? close.toLocaleDateString("en-US") : "TBD"} · taxes, insurance & HOA prorated ${proLabel} to year-end (360-day year) · payoff ${fmt$(s.payoff)}`;
   const tierDefs = [["Bottom", num(t.bottom)], ["Happy", num(t.happy)], ["Best", num(t.best)]];
   $id("net-head").innerHTML = "<th></th>" + tierDefs.map(([l, p]) => `<th class="num">${l}<br>${fmt$(p)}</th>`).join("");
   const rowsDef = [
@@ -756,9 +761,9 @@ function render(d) {
     ["Home warranty", () => -num(f.warranty)],
     [`Out-of-state withholding (${num(f.outOfStatePct)}%)`, (p) => -p * num(f.outOfStatePct) / 100],
     ["Misc attorney fees", () => -num(f.misc)],
-    [`Prorated HOA (${days} days)`, () => -(num(s.hoa) / 360) * days],
-    [`Prorated taxes (${days} days)`, () => -(num(s.taxes) / 360) * days],
-    [`Prorated insurance (${days} days)`, () => -(num(s.insurance) / 360) * days],
+    [`Prorated HOA (${proLabel})`, () => -(num(s.hoa) / 360) * days],
+    [`Prorated taxes (${proLabel})`, () => -(num(s.taxes) / 360) * days],
+    [`Prorated insurance (${proLabel})`, () => -(num(s.insurance) / 360) * days],
   ];
   let html = "";
   for (const [lbl, fn] of rowsDef) {

@@ -1,0 +1,10 @@
+files.zip
+files/
+Thumbs.db
+desktop.ini
+
+# Never commit real client data or live MLS share links — the repo is public.
+# Working copies of the tool with a live deal preloaded live here.
+local/
+*.local.html
+svr-cmas-backup.json

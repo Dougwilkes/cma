@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMA | Southern Visions Real Estate</title>
+<script src="https://unpkg.com/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script src="https://unpkg.com/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<style>
+  :root{
+    --burgundy:#7C2230; --burgundy-dark:#571521; --ink:#22262B; --paper:#FAF8F5;
+    --card:#FFFFFF; --line:#E5E0D8; --mute:#6B7076; --gold:#B98A2F;
+    --active:#2F6DB3; --pending:#B98A2F; --sold:#2E7D4F; --expired:#8A8F98;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#2b2024;font-family:var(--sans);color:var(--ink);overflow:hidden}
+  #stage{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:10px;padding:16px}
+  #book{max-width:100%}
+  .page{background:var(--paper);color:var(--ink);overflow:hidden;border:1px solid #d8d0c4}
+  .page-content{width:100%;height:100%;display:flex;flex-direction:column;padding:34px 36px 26px}
+  .kicker{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--burgundy);font-weight:700;margin-bottom:4px}
+  h2.pg{font-family:var(--serif);font-size:26px;line-height:1.1;margin-bottom:2px}
+  .sub{font-size:11px;color:var(--mute);margin-bottom:14px}
+  .foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:9px;color:var(--mute);letter-spacing:.06em}
+  .tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:99px;color:#fff}
+  table.cma{width:100%;border-collapse:collapse;font-size:10.5px;background:var(--card)}
+  table.cma th{background:var(--ink);color:#fff;text-align:left;padding:5px 7px;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+  table.cma td{padding:5px 7px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.cma tr:last-child td{border-bottom:none}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .note{font-size:9.5px;color:var(--mute);line-height:1.45;margin-top:8px}
+  .cardbox{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+  .cover{background:linear-gradient(160deg,var(--burgundy) 0%,var(--burgundy-dark) 78%);color:#fff;position:relative}
+  .cover .page-content{padding:44px 40px 30px}
+  .cover-logo{background:#fff;border-radius:10px;padding:14px 18px;width:190px;margin-bottom:26px}
+  .cover-logo img{width:100%;display:block}
+  .cover .kicker{color:#E8C7A0}
+  .cover h1{font-family:var(--serif);font-size:34px;line-height:1.08;margin:6px 0 14px}
+  .cover .tagline{font-family:var(--serif);font-style:italic;font-size:15px;color:#F3DFC9;margin-bottom:4px}
+  .cover .noexc{font-size:10px;letter-spacing:.24em;font-weight:700;color:#E8C7A0}
+  .cover .who{margin-top:auto;border-top:1px solid rgba(255,255,255,.25);padding-top:14px;font-size:12px;line-height:1.7}
+  .cover .who b{font-size:14px}
+  .cover .sig{width:120px;opacity:.95;margin-top:8px}
+  .backcover{background:linear-gradient(200deg,var(--burgundy) 0%,var(--burgundy-dark) 80%);color:#fff}
+  .agenda{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .agenda li{display:flex;gap:12px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 12px}
+  .agenda .n{font-family:var(--serif);font-size:18px;color:var(--burgundy);font-weight:700;min-width:22px}
+  .agenda b{font-size:12.5px}
+  .agenda span.d{display:block;font-size:10px;color:var(--mute)}
+  .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+  .fact{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;text-align:center}
+  .fact .v{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--burgundy)}
+  .fact .l{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:2px}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+  .kpi .v{font-family:var(--serif);font-size:17px;font-weight:700}
+  .kpi .l{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  .kpi .s{font-size:8.5px;color:var(--mute)}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+  .tier{border-radius:10px;padding:14px 10px;text-align:center;color:#fff}
+  .tier .l{font-size:9px;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
+  .tier .v{font-family:var(--serif);font-size:22px;font-weight:700;margin-top:3px}
+  .tier .d{font-size:9px;opacity:.85;margin-top:3px}
+  table.net td,table.net th{padding:4px 7px;font-size:10px}
+  table.net .total td{background:var(--burgundy);color:#fff;font-weight:700;font-size:11.5px}
+  .steps{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .step .dot{min-width:24px;height:24px;border-radius:50%;background:var(--burgundy);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .step b{font-size:12px}
+  .step span{display:block;font-size:10px;color:var(--mute);line-height:1.45}
+  #bar{display:flex;align-items:center;gap:14px;color:#e9ddd0;font-size:12px;user-select:none}
+  #bar button{background:#fff;border:none;border-radius:99px;padding:7px 16px;font-weight:700;color:var(--burgundy-dark);cursor:pointer;font-size:12px}
+  #bar button:hover{background:#f3e7dc}
+  .imgpage{background:#EDEDEB}
+  .imgpage img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+  @media (max-width:700px){ h2.pg{font-size:21px} .page-content{padding:24px 22px 18px} }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="book">
+
+    <!-- 1 · COVER -->
+    <div class="page cover" data-density="hard">
+      <div class="page-content">
+        <div class="cover-logo"><img src="assets/svr-logo.png" alt="Southern Visions Real Estate"></div>
+        <div class="kicker">Comparative Market Analysis</div>
+        <h1 id="c-address">118 Magnolia Ridge Court<br>Lexington, SC 29072</h1>
+        <div class="tagline">Your home SOLD for the highest price.</div>
+        <div class="noexc">NO EXCEPTIONS. NO EXCUSES.</div>
+        <div class="who">
+          Prepared exclusively for <b id="c-client">Sample Client</b><br>
+          <b>Doug Wilkes</b> · Real Estate Agent<br>
+          C: 843-364-3346 · O: 803-359-9571<br>
+          dwilkes@svrealty.com · www.svrealty.com<br>
+          955 Old Cherokee Rd, Lexington, SC 29072
+          <img class="sig" src="assets/dw-signature-white.png" alt="DW">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 · AGENDA + VIDEO -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Agenda</div>
+        <h2 class="pg">What We Will Cover</h2>
+        <div class="sub">A data-first path to making your home the obvious choice.</div>
+        <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#000;margin-bottom:4px">
+          <iframe id="svrVideo" src="https://www.youtube.com/embed/rtMRlLsu7Xk?enablejsapi=1&rel=0&playsinline=1" title="Listing Appointment with Doug Wilkes" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+        </div>
+        <div class="note" style="margin:0 0 10px">▶ Listing Appointment with Doug Wilkes — plays automatically (tap the video to unmute).</div>
+        <ul class="agenda">
+          <li><span class="n">1</span><div><b>Your Team</b><span class="d">Who's working for you at Southern Visions</span></div></li>
+          <li><span class="n">2</span><div><b>Our Playbook</b><span class="d">Fiduciary duties · commitments · marketing plan · listing process · no-risk program</span></div></li>
+          <li><span class="n">3</span><div><b>The Subject Property &amp; Market Snapshot</b><span class="d" id="ag-sub2">Your property · your market, last 24 months</span></div></li>
+          <li><span class="n">4</span><div><b>Time vs. Money &amp; The Competition</b><span class="d">Active, pending, sold &amp; expired listings around you</span></div></li>
+          <li><span class="n">5</span><div><b>Data-Suggested Price Range &amp; Seller Net Sheet</b><span class="d">Bottom · Happy · Best tiers — and what you walk away with</span></div></li>
+        </ul>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>2</span></div>
+      </div>
+    </div>
+
+    <!-- 3 · ABOUT DOUG -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Your Agent</div>
+        <h2 class="pg">Doug Wilkes</h2>
+        <div class="sub">Real Estate Agent · Sales &amp; Development · Southern Visions Realty</div>
+        <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:10px">
+          <img src="assets/doug-headshot.jpg" alt="Doug Wilkes" style="width:110px;border-radius:10px;border:1px solid var(--line)">
+          <div style="font-size:11px;color:var(--mute);line-height:1.55">
+            A Citadel graduate, Doug co-founded and ran <b style="color:var(--ink)">Artisan Logistics Inc.</b>, twice named to the Inc.&nbsp;5000, before bringing that operational, long-term mindset to real estate. In his first year he closed nearly <b style="color:var(--burgundy)">$10 million</b> in sales and placed over <b style="color:var(--burgundy)">$20 million</b> under contract across Lexington, Richland, and Newberry counties.
+          </div>
+        </div>
+        <div class="cardbox">
+          <b style="font-size:12px">My mission</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.5;font-style:italic">
+            "To provide an experience so positive that you feel the trust, comfort, and confidence in securing a real estate agent for life. The best interest of my clients always comes first."
+          </div>
+        </div>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">My commitments to you</b>
+          <div style="font-size:10.5px;color:var(--mute);margin-top:5px;line-height:1.65">
+            · 100% forthcoming about price, condition, and what it takes to sell<br>
+            · The truth, regardless of the situation<br>
+            · Proactive communication — calls, emails, and texts returned with urgency<br>
+            · Aggressively searching for qualified buyers every day<br>
+            · Never locked into a long-term contract
+          </div>
+        </div>
+        <div class="note">More: <b>svrealty.com/agent/doug-wilkes</b> · featured listings: <b>svrealty.com/doug-wilkes-featured-properties</b> · Instagram <b>@dougwilkesrei</b></div>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>3</span></div>
+      </div>
+    </div>
+
+    <!-- 4 · MEET THE TEAM -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Your Team</div>
+        <h2 class="pg">The Southern Visions Team</h2>
+        <div class="sub">Developing Lexington County since 1988 — 28+ neighborhoods, $1B+ in career sales.</div>
+        <div class="cardbox" style="display:flex;gap:12px;align-items:flex-start">
+          <img src="assets/gregory-headshot.jpg" alt="Gregory Wilkins" style="width:74px;border-radius:10px;border:1px solid var(--line)">
+          <div>
+            <b style="font-size:12.5px">Gregory Wilkins</b>
+            <div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--burgundy);font-weight:700">Real Estate Agent · Chief Growth Officer</div>
+            <div style="font-size:10.5px;color:var(--mute);margin-top:3px;line-height:1.5">15+ years in development; CoStar PowerBroker Award winner ($40M+ in sales). With Southern Visions since 2010.</div>
+            <div style="font-size:9.5px;margin-top:3px">(803) 606-2186 · <b>svrealty.com/agent/gregory-wilkins</b></div>
+          </div>
+        </div>
+        <div class="cardbox" style="display:flex;gap:12px;align-items:flex-start;margin-top:10px">
+          <div style="min-width:74px;height:74px;border-radius:10px;background:var(--burgundy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:26px;font-weight:700">AA</div>
+          <div>
+            <b style="font-size:12.5px">Aimee Armstrong</b>
+            <div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--burgundy);font-weight:700">Team Administrative Manager · Licensed Agent</div>
+            <div style="font-size:10.5px;color:var(--mute);margin-top:3px;line-height:1.5">Brings clarity, structure, and strategy to every transaction — contracts, deadlines, and details never slip. 22+ years in the Midlands community.</div>
+            <div style="font-size:9.5px;margin-top:3px">(803) 556-3074 · <b>svrealty.com/agent/aimee-armstrong</b></div>
+          </div>
+        </div>
+        <img src="assets/photo-closing-day.jpg" alt="Closing day at the attorney's office" style="width:100%;border-radius:10px;margin-top:10px;border:1px solid var(--line)">
+        <div class="note" style="margin-top:4px">Closing day — the handshake we work toward on every deal.</div>
+        <div class="foot"><span>svrealty.com</span><span>4</span></div>
+      </div>
+    </div>
+
+    <!-- 5-14 · OUR PLAYBOOK (from the SVR resume, exact format) -->
+    <div class="page imgpage"><img src="assets/resume-p03.jpg" alt="Fiduciary Duties"></div>
+    <div class="page imgpage"><img src="assets/resume-p04.jpg" alt="My Commitments to You"></div>
+    <div class="page imgpage"><img src="assets/resume-p05.jpg" alt="Mission Statement"></div>
+    <div class="page imgpage"><img src="assets/resume-p06.jpg" alt="Southern Visions Real Estate Resume — Neighborhoods Developed"></div>
+    <div class="page imgpage"><img src="assets/resume-p07.jpg" alt="Southern Visions Real Estate Resume — Current Projects"></div>
+    <div class="page imgpage"><img src="assets/resume-p08.jpg" alt="Photography — professional photos sell 32% faster"></div>
+    <div class="page imgpage"><img src="assets/resume-p09.jpg" alt="The Listing Process — steps 1-6"></div>
+    <div class="page imgpage"><img src="assets/resume-p10.jpg" alt="The Listing Process — steps 7-15"></div>
+    <div class="page imgpage"><img src="assets/resume-p11.jpg" alt="Marketing Plan of Action"></div>
+    <div class="page imgpage"><img src="assets/resume-p12.jpg" alt="My No Risk Listing Program"></div>
+
+    <!-- 15 · SUBJECT PROPERTY -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Pricing Strategy</div>
+        <h2 class="pg">The Subject Property</h2>
+        <div class="sub" id="s-sub">118 Magnolia Ridge Court, Lexington, SC 29072 · Sample Subdivision</div>
+        <div class="facts">
+          <div class="fact"><div class="v" id="f-beds">3</div><div class="l">Bedrooms</div></div>
+          <div class="fact"><div class="v" id="f-baths">2</div><div class="l">Bathrooms</div></div>
+          <div class="fact"><div class="v" id="f-sqft">1,625</div><div class="l">Heated SqFt</div></div>
+          <div class="fact"><div class="v" id="f-year">1978</div><div class="l">Year Built</div></div>
+          <div class="fact"><div class="v" id="f-lot">0.26</div><div class="l">Acres</div></div>
+          <div class="fact"><div class="v" id="f-garage">2-Car</div><div class="l">Garage</div></div>
+        </div>
+        <div class="cardbox">
+          <b style="font-size:12px">Condition</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.5" id="s-condition"></div>
+        </div>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">Making your home the obvious choice</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.5">Buyers shop by comparison. The pages that follow look at the same data buyers and their agents see — what's for sale, what's under contract, what sold, and what sat — so we can position your home to win its price bracket instead of competing in it.</div>
+        </div>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>15</span></div>
+      </div>
+    </div>
+
+    <!-- 6 · MARKET SNAPSHOT -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Market Snapshot</div>
+        <h2 class="pg" id="m-title">Zip 29212 — Last 24 Months</h2>
+        <div class="sub" id="m-sub"></div>
+        <div class="kpis" id="m-kpis"></div>
+        <div class="cardbox">
+          <b style="font-size:11px" id="m-trend-title">Median sold price by quarter</b>
+          <svg id="m-trend" viewBox="0 0 460 112" style="width:100%;margin-top:6px"></svg>
+          <div class="note" id="m-caveat"></div>
+        </div>
+        <div class="foot"><span id="m-source">Source: Paragon MLS</span><span>16</span></div>
+      </div>
+    </div>
+
+    <!-- 7 · TIME VS MONEY -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Pricing Strategy</div>
+        <h2 class="pg">Time vs. Money</h2>
+        <div class="sub">The amount of time it takes to accept an offer directly correlates to your net proceeds.</div>
+        <div class="cardbox">
+          <b style="font-size:11px">Sold price as % of list price, by days on market</b>
+          <svg viewBox="0 0 460 150" style="width:100%;margin-top:8px">
+            <g stroke="#E5E0D8" stroke-width="1">
+              <line x1="40" y1="15"  x2="450" y2="15"/><line x1="40" y1="55" x2="450" y2="55"/>
+              <line x1="40" y1="95"  x2="450" y2="95"/><line x1="40" y1="135" x2="450" y2="135"/>
+            </g>
+            <g font-size="8" fill="#6B7076" text-anchor="end">
+              <text x="36" y="18">100%</text><text x="36" y="58">96%</text><text x="36" y="98">92%</text><text x="36" y="138">88%</text>
+            </g>
+            <polyline fill="none" stroke="#7C2230" stroke-width="2.5"
+              points="60,25 125,25 190,25 255,55 320,75 385,65 450,65"/>
+            <g fill="#7C2230">
+              <circle cx="60" cy="25" r="3.5"/><circle cx="125" cy="25" r="3.5"/><circle cx="190" cy="25" r="3.5"/>
+              <circle cx="255" cy="55" r="3.5"/><circle cx="320" cy="75" r="3.5"/><circle cx="385" cy="65" r="3.5"/><circle cx="450" cy="65" r="3.5"/>
+            </g>
+            <g font-size="8" fill="#22262B" text-anchor="middle">
+              <text x="60" y="148">0–5</text><text x="125" y="148">6–10</text><text x="190" y="148">11–20</text>
+              <text x="255" y="148">21–30</text><text x="320" y="148">31–45</text><text x="385" y="148">46–99</text><text x="448" y="148">100+</text>
+              <text x="60" y="16" font-weight="bold">99%</text><text x="190" y="16" font-weight="bold">99%</text>
+              <text x="255" y="46" font-weight="bold">96%</text><text x="320" y="66" font-weight="bold">94%</text>
+            </g>
+          </svg>
+        </div>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">What this means for you</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.55" id="tvm-note"></div>
+        </div>
+        <div class="foot"><span>Source: Midlands MLS days-on-market analysis</span><span>17</span></div>
+      </div>
+    </div>
+
+    <!-- 8 · ACTIVE COMPETITION -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">The Competition</div>
+        <h2 class="pg">Active — Who We're Up Against</h2>
+        <div class="sub"><span class="tag" style="background:var(--active)">Active</span>&nbsp; <span id="act-sub">On the market right now</span></div>
+        <table class="cma">
+          <thead><tr><th>Address</th><th class="num">List</th><th class="num">SqFt</th><th class="num">$/SF</th><th class="num">DOM</th></tr></thead>
+          <tbody id="act-tbody"></tbody>
+        </table>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">Read of the board</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.55" id="act-read"></div>
+        </div>
+        <div class="foot"><span id="act-source">Source: Paragon MLS</span><span>18</span></div>
+      </div>
+    </div>
+
+    <!-- 9 · SOLD / PENDING -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">The Competition</div>
+        <h2 class="pg">What Buyers Actually Paid</h2>
+        <div class="sub"><span class="tag" style="background:var(--sold)">Sold</span>&nbsp; Closed sales · most-comparable set</div>
+        <table class="cma">
+          <thead><tr><th>Address</th><th class="num">Sold</th><th class="num">SqFt</th><th class="num">$/SF</th><th class="num">DOM</th><th>Closed</th></tr></thead>
+          <tbody id="sold-tbody"></tbody>
+        </table>
+        <div id="pend-block">
+          <div class="sub" style="margin-top:12px"><span class="tag" style="background:var(--pending)">Pending</span>&nbsp; Under contract now</div>
+          <table class="cma">
+            <thead><tr><th>Address</th><th class="num">List</th><th class="num">SqFt</th><th class="num">$/SF</th><th class="num">DOM</th></tr></thead>
+            <tbody id="pend-tbody"></tbody>
+          </table>
+        </div>
+        <div class="note" id="sold-note"></div>
+        <div class="foot"><span id="sold-source">Source: Paragon MLS CMA</span><span>19</span></div>
+      </div>
+    </div>
+
+    <!-- 10 · EXPIRED -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">The Competition</div>
+        <h2 class="pg">What Buyers Didn't Want</h2>
+        <div class="sub"><span class="tag" style="background:var(--expired)">Expired</span>&nbsp; Listings that died on the vine</div>
+        <table class="cma">
+          <thead><tr><th>Address</th><th class="num">Last ask</th><th class="num">Orig ask</th><th class="num">SqFt</th><th class="num">DOM</th></tr></thead>
+          <tbody id="exp-tbody"></tbody>
+        </table>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">The lesson</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.55" id="exp-lesson"></div>
+        </div>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">A price cut is a public event</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.55">
+            Buyer agents see the listing history and negotiate harder against sellers who blinked. Starting in the right bracket keeps the leverage on your side of the table.
+          </div>
+        </div>
+        <div class="foot"><span id="exp-source">Source: Paragon MLS</span><span>20</span></div>
+      </div>
+    </div>
+
+    <!-- 11 · PRICE RANGE -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Pricing Strategy</div>
+        <h2 class="pg">Data-Suggested Price Range</h2>
+        <div class="sub" id="pr-sub">Where the evidence puts your home</div>
+        <div class="tiers">
+          <div class="tier" style="background:#8A8F98"><div class="l">Bottom</div><div class="v" id="t-bottom">—</div><div class="d">Fast-sale floor</div></div>
+          <div class="tier" style="background:var(--burgundy)"><div class="l">Happy</div><div class="v" id="t-happy">—</div><div class="d">Most likely outcome</div></div>
+          <div class="tier" style="background:var(--gold)"><div class="l">Best</div><div class="v" id="t-best">—</div><div class="d">Top of the market</div></div>
+        </div>
+        <div class="cardbox">
+          <b style="font-size:12px">Why this range holds up</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:5px;line-height:1.6" id="pr-why"></div>
+        </div>
+        <div class="cardbox" style="margin-top:10px">
+          <b style="font-size:12px">Price bracketing — 2× the exposure</b>
+          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.55" id="pr-bracket"></div>
+        </div>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>21</span></div>
+      </div>
+    </div>
+
+    <!-- 12 · SELLER NET -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Seller Profit &amp; Loss</div>
+        <h2 class="pg">Seller Net Sheet</h2>
+        <div class="sub" id="net-sub"></div>
+        <table class="cma net">
+          <thead><tr id="net-head"></tr></thead>
+          <tbody id="net-tbody"></tbody>
+        </table>
+        <div class="note">Estimates only — not a settlement statement. Assumes buyer pays inspections and appraisal. Final figures come from the closing attorney.</div>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>22</span></div>
+      </div>
+    </div>
+
+    <!-- 23 · CLOSING QUESTION -->
+    <div class="page">
+      <div class="page-content" style="justify-content:center;align-items:center;text-align:center">
+        <div class="kicker">Decision Time</div>
+        <h2 class="pg" style="font-size:32px;margin:10px 0 16px">Where should we<br>go from here?</h2>
+        <div style="font-size:12px;color:var(--mute);max-width:340px;line-height:1.7" id="close-summary"></div>
+        <img src="assets/svr-logo.png" alt="Southern Visions Real Estate" style="width:150px;margin-top:28px">
+      </div>
+    </div>
+
+    <!-- 16 · BACK COVER -->
+    <div class="page backcover" data-density="hard">
+      <div class="page-content" style="justify-content:center;align-items:center;text-align:center">
+        <img src="assets/dw-signature-white.png" alt="DW" style="width:150px;margin-bottom:6px">
+        <div style="font-family:var(--serif);font-size:24px;font-weight:700">Doug Wilkes</div>
+        <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#E8C7A0;margin:4px 0 18px">Real Estate Agent</div>
+        <div style="font-size:12px;line-height:2">
+          Cell: 843-364-3346<br>
+          Office: 803-359-9571<br>
+          dwilkes@svrealty.com<br>
+          www.svrealty.com · @dougwilkesrei<br>
+          955 Old Cherokee Rd, Lexington, SC 29072
+        </div>
+        <div style="font-size:10px;letter-spacing:.22em;color:#E8C7A0;margin-top:22px">RESIDENTIAL · COMMERCIAL · DEVELOPMENT</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="bar">
+    <button id="prev">‹ Prev</button>
+    <span id="pageno">1 / 24</span>
+    <button id="next">Next ›</button>
+    <span style="opacity:.6">drag a corner or use ← → keys</span>
+  </div>
+</div>
+
+<script>
+// ================= Default (sample) data — fictional demo property =================
+// This is what shows when cma.html is opened without a client link. Deliberately
+// fictional: real client data lives only inside each client's own link/gist.
+const DEMO_CLOSE = (() => { const d = new Date(); d.setDate(d.getDate() + 45); return d.toISOString().slice(0, 10); })();
+const DEFAULT_DATA = {
+  client: { name: "Sample Client", email: "" },
+  subject: {
+    street: "118 Magnolia Ridge Court", cityStateZip: "Lexington, SC 29072", neighborhood: "Sample Subdivision",
+    beds: 3, baths: 2, sqft: 1625, yearBuilt: 1985, lot: 0.26, garage: "2-Car",
+    condition: "Sample report — this is a demonstration of the Southern Visions CMA format using fictional figures. Your report will show your property's actual condition, comps, and numbers.",
+    payoff: 150000, taxes: 1700, insurance: 1500, hoa: 500, closeDate: DEMO_CLOSE
+  },
+  fees: { deedStampRate: 0.0037, deedPrep: 500, sellerPct: 3, buyerPct: 3, cl100: 0, warranty: 0, misc: 0, renovations: 0, repairs: 0, specialAssessments: 0, outOfStatePct: 0 },
+  tiers: { bottom: 250000, happy: 260000, best: 275000 },
+  market: {
+    title: "Sample Market — Last 24 Months",
+    sub: "Illustrative figures · your report uses live MLS data for your area",
+    source: "Sample report — figures are illustrative",
+    trendTitle: "Median sold price by quarter",
+    kpis: [
+      { label: "Sales analyzed", value: "99", sub: "last 24 months" },
+      { label: "Median sold price", value: "$255,000", sub: "this segment" },
+      { label: "Median $/SqFt", value: "$155", sub: "sold-price basis" },
+      { label: "Median DOM", value: "21", sub: "avg 38" },
+      { label: "Sold-to-list", value: "96.5%", sub: "of original ask" },
+      { label: "Took a price cut", value: "41%", sub: "before selling" }
+    ],
+    trend: "Q1=246000\nQ2=252000\nQ3=249000\nQ4=255000\nQ5=258000\nQ6=254000\nQ7=260000\nQ8=257000",
+    caveat: "Sample report. Figures on this page are illustrative only — your report draws its numbers directly from the MLS for your zip code and price band."
+  },
+  comps: {
+    active: [
+      { address: "1 Oakleaf Court", price: 325000, sqft: 2200, dom: 19, note: "Fully renovated: granite, new appliances, new deck and fence. Recently reduced." },
+      { address: "2 Cedar Bend Lane", price: 319900, sqft: 1887, dom: 57, note: "Formal living room plus great room, renovated hall bath, new LVP. 4BR/2.5BA." },
+      { address: "3 Southpine Way", price: 232000, sqft: 1316, dom: 335, note: "All-brick ranch on a cul-de-sac. Started high and has been sitting since." }
+    ],
+    pending: [
+      { address: "4 Baymore Trace", price: 231100, sqft: 1556, dom: 229, note: "Under contract after 229 days on market — the cost of an optimistic list price." }
+    ],
+    sold: [
+      { address: "5 Tawny Branch Court", price: 275000, sqft: 1700, dom: 62, closed: "Feb", note: "0.40 ac, 2-car garage. Closest comparable by size." },
+      { address: "6 Shadowpine Road", price: 265000, sqft: 1710, dom: 25, closed: "Apr", note: "2-car garage. Sold quickly at a fair price." },
+      { address: "7 Forest Fern Road", price: 249900, sqft: 1887, dom: 28, closed: "Jul", note: "0.27 ac, 2-car garage. Most recent sale in the set." },
+      { address: "8 Colony House Court", price: 235000, sqft: 1484, dom: 27, closed: "Jun", note: "0.16 ac, 1-car garage. Newer build, smaller footprint." }
+    ],
+    expired: [
+      { address: "9 Lakefront Drive", price: 437000, origPrice: 458850, sqft: 1985, dom: 153, note: "One small price cut in 153 days — still well above the market. Buyers never bit." },
+      { address: "10 Timbertrail Court", price: 410000, origPrice: 410000, sqft: 2700, dom: 166, note: "Zero price movement in 166 days — the market moved on without it." }
+    ]
+  },
+  narrative: {
+    activeSub: "Sample report · your report shows the homes competing with yours right now",
+    activeRead: "",
+    activeSource: "Sample report — figures are illustrative",
+    soldSource: "Sample report — figures are illustrative",
+    expiredLesson: "",
+    expiredSource: "Sample report — figures are illustrative"
+  }
+};
+
+// ================= Load the client's data =================
+// Two link formats are supported:
+//   ?g=<gist id>  short link — data lives in an unlisted GitHub gist
+//   #z=<blob>     self-contained link — data is compressed into the URL itself
+// With neither, the fictional sample above is shown.
+async function resolveData() {
+  const gistId = new URLSearchParams(location.search).get("g");
+  if (gistId && /^[0-9a-f]{6,64}$/i.test(gistId)) {
+    try {
+      // cache-bust: GitHub's CDN can serve a stale copy for a minute after an edit,
+      // and the client should always see the numbers Doug just corrected.
+      const res = await fetch("https://api.github.com/gists/" + gistId + "?_=" + Date.now(),
+        { cache: "no-store", headers: { Accept: "application/vnd.github+json" } });
+      if (!res.ok) throw new Error("gist HTTP " + res.status);
+      const gist = await res.json();
+      const file = gist.files["cma.json"] || Object.values(gist.files)[0];
+      let text = file.content;
+      if (file.truncated && file.raw_url) text = await (await fetch(file.raw_url)).text();
+      return JSON.parse(text);
+    } catch (e) {
+      console.error("Could not load this CMA from its short link.", e);
+      alert("This report could not be loaded. Please ask Doug to resend the link.");
+      return DEFAULT_DATA;
+    }
+  }
+  try {
+    const h = location.hash.startsWith("#z=") ? location.hash.slice(3) : "";
+    if (h) {
+      const json = LZString.decompressFromEncodedURIComponent(h);
+      if (json) return JSON.parse(json);
+    }
+  } catch (e) { console.warn("Could not parse CMA data from URL, showing sample.", e); }
+  return DEFAULT_DATA;
+}
+
+// ================= Helpers =================
+const $id = (i) => document.getElementById(i);
+const num = (v) => (v === "" || v === null || v === undefined ? 0 : Number(v) || 0);
+const fmt$ = (n) => "$" + Math.round(num(n)).toLocaleString("en-US");
+const fmtN = (n) => num(n).toLocaleString("en-US");
+const paren = (n) => "(" + Math.round(Math.abs(n)).toLocaleString("en-US") + ")";
+const psf = (p, s) => (num(s) > 0 ? Math.round(num(p) / num(s)) : 0);
+const median = (a) => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// ================= Render =================
+function render(d) {
+  const s = d.subject, t = d.tiers, f = d.fees, c = d.comps, m = d.market, n = d.narrative || {};
+
+  $id("c-address").innerHTML = esc(s.street) + "<br>" + esc(s.cityStateZip);
+  $id("c-client").textContent = d.client.name || "You";
+  $id("ag-sub2").textContent = s.street + " · " + s.cityStateZip;
+  $id("s-sub").textContent = s.street + ", " + s.cityStateZip + (s.neighborhood ? " · " + s.neighborhood : "");
+  $id("f-beds").textContent = s.beds; $id("f-baths").textContent = s.baths;
+  $id("f-sqft").textContent = fmtN(s.sqft); $id("f-year").textContent = s.yearBuilt;
+  $id("f-lot").textContent = s.lot; $id("f-garage").textContent = s.garage || "—";
+  $id("s-condition").textContent = s.condition || "—";
+
+  // Market snapshot
+  $id("m-title").textContent = m.title;
+  $id("m-sub").textContent = m.sub;
+  $id("m-source").textContent = m.source;
+  $id("m-trend-title").textContent = m.trendTitle || "Trend";
+  $id("m-caveat").textContent = m.caveat || "";
+  $id("m-kpis").innerHTML = (m.kpis || []).map(k =>
+    `<div class="kpi"><div class="v">${esc(k.value)}</div><div class="l">${esc(k.label)}</div><div class="s">${esc(k.sub)}</div></div>`).join("");
+  const rows = String(m.trend || "").split("\n").map(l => l.trim()).filter(Boolean)
+    .map(l => { const i = l.lastIndexOf("="); return { q: l.slice(0, i).trim(), v: num(l.slice(i + 1)) }; })
+    .filter(r => r.q && r.v > 0);
+  if (rows.length) {
+    const vmin = Math.min(...rows.map(r => r.v)), vmax = Math.max(...rows.map(r => r.v));
+    const step = 450 / rows.length, bw = Math.min(34, step - 10);
+    $id("m-trend").innerHTML = rows.map((r, i) => {
+      const h = 25 + (vmax > vmin ? 52 * (r.v - vmin) / (vmax - vmin) : 40);
+      const x = 8 + i * step, y = 100 - h;
+      const lab = "$" + Math.round(r.v / 1000) + "k";
+      return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="#7C2230" opacity="${i === rows.length - 1 ? .55 : .85}"/>
+        <text x="${x + bw / 2}" y="${y - 4}" font-size="8" fill="#22262B" text-anchor="middle">${esc(lab)}</text>
+        <text x="${x + bw / 2}" y="110" font-size="8" fill="#6B7076" text-anchor="middle">${esc(r.q)}</text>`;
+    }).join("");
+  }
+
+  // Time vs money
+  const happy = num(t.happy);
+  $id("tvm-note").innerHTML = `Homes that sell in the first three weeks keep ~99% of asking price. After day 30, sellers give up 4–6% — on a <b style="color:var(--burgundy)">${fmt$(happy)}</b> sale that's <b style="color:var(--burgundy)">${fmt$(happy * .04)}–${fmt$(happy * .06)}</b> of your equity. Pricing right on day one isn't cautious, it's how you protect your net.`;
+
+  // Comps tables
+  const noteTd = (x) => `<b>${esc(x.address)}</b>${x.note ? `<br><span style="color:var(--mute)">${esc(x.note)}</span>` : ""}`;
+  $id("act-tbody").innerHTML = (c.active || []).map(x =>
+    `<tr><td>${noteTd(x)}</td><td class="num">${fmt$(x.price)}</td><td class="num">${fmtN(x.sqft)}</td><td class="num">$${psf(x.price, x.sqft)}</td><td class="num">${esc(x.dom)}</td></tr>`).join("") ||
+    `<tr><td colspan="5" style="color:var(--mute)">No directly comparable active competition right now — that's leverage.</td></tr>`;
+  $id("sold-tbody").innerHTML = (c.sold || []).map(x =>
+    `<tr><td>${noteTd(x)}</td><td class="num">${fmt$(x.price)}</td><td class="num">${fmtN(x.sqft)}</td><td class="num">$${psf(x.price, x.sqft)}</td><td class="num">${esc(x.dom)}</td><td>${esc(x.closed || "")}</td></tr>`).join("");
+  if ((c.pending || []).length) {
+    $id("pend-tbody").innerHTML = c.pending.map(x =>
+      `<tr><td>${noteTd(x)}</td><td class="num">${fmt$(x.price)}</td><td class="num">${fmtN(x.sqft)}</td><td class="num">$${psf(x.price, x.sqft)}</td><td class="num">${esc(x.dom)}</td></tr>`).join("");
+  } else { $id("pend-block").style.display = "none"; }
+  $id("exp-tbody").innerHTML = (c.expired || []).map(x =>
+    `<tr><td>${noteTd(x)}</td><td class="num">${fmt$(x.price)}</td><td class="num">${fmt$(x.origPrice ?? x.price)}</td><td class="num">${fmtN(x.sqft)}</td><td class="num">${esc(x.dom)}</td></tr>`).join("") ||
+    `<tr><td colspan="5" style="color:var(--mute)">No recent expireds in this bracket.</td></tr>`;
+
+  // Sold stats
+  const solds = (c.sold || []).filter(x => num(x.sqft) > 0 && num(x.price) > 0);
+  const medPsf = Math.round(median(solds.map(x => num(x.price) / num(x.sqft))));
+  const medDom = median((c.sold || []).map(x => num(x.dom)).filter(v => v > 0));
+  const indicated = medPsf * num(s.sqft);
+  $id("sold-note").innerHTML = solds.length ?
+    `Sold comps median: <b>$${medPsf}/SqFt</b> · median ${medDom} days on market. Applied to your ${fmtN(s.sqft)} SqFt ≈ <b>${fmt$(indicated)}</b> indicated value before adjustments.` : "";
+
+  // Narrative (auto with override)
+  $id("act-sub").textContent = n.activeSub || "On the market right now";
+  $id("act-source").textContent = n.activeSource || "Source: MLS";
+  $id("sold-source").textContent = n.soldSource || "Source: MLS";
+  $id("exp-source").textContent = n.expiredSource || "Source: MLS";
+  $id("act-read").innerHTML = n.activeRead ? esc(n.activeRead) :
+    `Every listing above is a home your buyer will tour before or after yours. There is open space in the <b style="color:var(--burgundy)">${fmt$(t.bottom)}–${fmt$(t.best)}</b> lane for a well-presented, correctly priced home — that's the gap we position you in.`;
+  $id("exp-lesson").innerHTML = n.expiredLesson ? esc(n.expiredLesson) :
+    `These listings chased a price the data didn't support, then either cut too little or not at all. Buyers punished the hesitation with silence. An overpriced listing doesn't just fail to sell — it <b style="color:var(--burgundy)">helps sell the correctly-priced house next door</b>. We will not be that listing.`;
+
+  // Price range
+  $id("pr-sub").textContent = "Where the evidence puts " + s.street;
+  $id("t-bottom").textContent = fmt$(t.bottom);
+  $id("t-happy").textContent = fmt$(t.happy);
+  $id("t-best").textContent = fmt$(t.best);
+  const closest = solds.length ? solds.reduce((a, b) => Math.abs(num(a.sqft) - num(s.sqft)) < Math.abs(num(b.sqft) - num(s.sqft)) ? a : b) : null;
+  const why = [];
+  if (solds.length) why.push(`Sold comps put your indicated value near <b>${fmt$(indicated)}</b> ($${medPsf}/SqFt × ${fmtN(s.sqft)} SqFt).`);
+  if (closest) why.push(`The closest comp by size — ${esc(closest.address)} — closed at <b>${fmt$(closest.price)}</b>.`);
+  why.push(`The <b>${fmt$(t.bottom)}–${fmt$(t.best)}</b> lane is where the buyer activity is.`);
+  $id("pr-why").innerHTML = why.map(w => "· " + w).join("<br>");
+  $id("pr-bracket").innerHTML = `Buyers search in brackets. Listing at <b style="color:var(--burgundy)">${fmt$(t.happy)}</b> puts you at the top of one search and the bottom of the next — two buyer pools see the home instead of one.`;
+
+  // Net sheet
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const close = s.closeDate ? new Date(s.closeDate + "T00:00:00") : null;
+  const days = close ? Math.max(0, Math.round((close - today) / 86400000)) : 0;
+  $id("net-sub").textContent = `Estimated proceeds at each tier · close ${close ? close.toLocaleDateString("en-US") : "TBD"} (${days} days) · 360-day-year prorations · payoff ${fmt$(s.payoff)}`;
+  const tierDefs = [["Bottom", num(t.bottom)], ["Happy", num(t.happy)], ["Best", num(t.best)]];
+  $id("net-head").innerHTML = "<th></th>" + tierDefs.map(([l, p]) => `<th class="num">${l}<br>${fmt$(p)}</th>`).join("");
+  const rowsDef = [
+    ["Mortgage payoff", () => -num(s.payoff)],
+    ["Renovations", () => -num(f.renovations)],
+    [`Deed stamps (${(num(f.deedStampRate) * 100).toFixed(2)}%)`, (p) => -p * num(f.deedStampRate)],
+    ["Deed preparation", () => -num(f.deedPrep)],
+    ["CL-100 inspection", () => -num(f.cl100)],
+    [`Seller broker compensation (${f.sellerPct}%)`, (p) => -p * num(f.sellerPct) / 100],
+    [`Buyer broker compensation (${f.buyerPct}%)`, (p) => -p * num(f.buyerPct) / 100],
+    ["Special assessments", () => -num(f.specialAssessments)],
+    ["Repairs", () => -num(f.repairs)],
+    ["Home warranty", () => -num(f.warranty)],
+    [`Out-of-state withholding (${num(f.outOfStatePct)}%)`, (p) => -p * num(f.outOfStatePct) / 100],
+    ["Misc attorney fees", () => -num(f.misc)],
+    [`Prorated HOA (${days} days)`, () => -(num(s.hoa) / 360) * days],
+    [`Prorated taxes (${days} days)`, () => -(num(s.taxes) / 360) * days],
+    [`Prorated insurance (${days} days)`, () => -(num(s.insurance) / 360) * days],
+  ];
+  let html = "";
+  for (const [lbl, fn] of rowsDef) {
+    const vals = tierDefs.map(([, p]) => fn(p));
+    if (vals.every(v => Math.round(v) === 0)) continue;
+    html += `<tr><td>${lbl}</td>` + vals.map(v => `<td class="num">${paren(v)}</td>`).join("") + "</tr>";
+  }
+  const nets = tierDefs.map(([, p]) => p + rowsDef.reduce((sum, [, fn]) => sum + fn(p), 0));
+  html += `<tr class="total"><td>Estimated net to seller</td>` + nets.map(v => `<td class="num">${fmt$(v)}</td>`).join("") + "</tr>";
+  $id("net-tbody").innerHTML = html;
+
+  // Closing summary
+  const weeks = medDom ? (medDom <= 24 ? "about three weeks" : `about ${Math.round(medDom / 7)} weeks`) : "weeks, not months";
+  $id("close-summary").innerHTML = `The data says ${esc(s.street)} can sell in the <b style="color:var(--burgundy)">${fmt$(t.bottom)}–${fmt$(t.best)}</b> range, most likely near <b style="color:var(--burgundy)">${fmt$(t.happy)}</b>, netting you roughly <b style="color:var(--burgundy)">${fmt$(nets[1])}</b> — in ${weeks} if we respect the market on day one.`;
+
+  document.title = `CMA — ${s.street} | Southern Visions Real Estate`;
+}
+
+// ================= Flipbook =================
+function initBook() {
+const el = document.getElementById("book");
+const pageFlip = new St.PageFlip(el, {
+  width: 550, height: 735,
+  size: "stretch",
+  minWidth: 280, maxWidth: 650,
+  minHeight: 380, maxHeight: 870,
+  maxShadowOpacity: 0.4,
+  showCover: true,
+  mobileScrollSupport: false,
+});
+pageFlip.loadFromHTML(document.querySelectorAll(".page"));
+const total = pageFlip.getPageCount();
+const label = document.getElementById("pageno");
+const update = () => { label.textContent = (pageFlip.getCurrentPageIndex() + 1) + " / " + total; };
+update();
+
+// Autoplay the intro video when the book opens to page 2; pause when leaving.
+const video = document.getElementById("svrVideo");
+const vidCmd = (func) => video.contentWindow.postMessage(JSON.stringify({ event: "command", func, args: [] }), "*");
+let videoStarted = false;
+const syncVideo = () => {
+  const idx = pageFlip.getCurrentPageIndex();
+  const showingPage2 = idx === 1 || idx === 2;
+  if (showingPage2 && !videoStarted) {
+    vidCmd("mute");        // browsers only allow scripted autoplay muted
+    vidCmd("playVideo");
+    videoStarted = true;
+  } else if (!showingPage2 && videoStarted) {
+    vidCmd("pauseVideo");
+    videoStarted = false;
+  }
+};
+pageFlip.on("flip", () => { update(); syncVideo(); });
+document.getElementById("prev").onclick = () => pageFlip.flipPrev();
+document.getElementById("next").onclick = () => pageFlip.flipNext();
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") pageFlip.flipPrev();
+  if (e.key === "ArrowRight") pageFlip.flipNext();
+});
+}
+
+// ================= Boot =================
+resolveData().then((data) => { render(data); initBook(); });
+</script>
+</body>
+</html>

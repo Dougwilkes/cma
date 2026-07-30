@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMA Dashboard | Southern Visions Real Estate</title>
+<script src="https://unpkg.com/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<style>
+  :root{
+    --burgundy:#7C2230; --burgundy-dark:#571521; --ink:#22262B; --paper:#FAF8F5;
+    --card:#FFFFFF; --line:#E5E0D8; --mute:#6B7076; --gold:#B98A2F;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);font-family:var(--sans);color:var(--ink);min-height:100vh}
+  header{background:linear-gradient(160deg,var(--burgundy),var(--burgundy-dark));color:#fff;padding:18px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  header img{height:52px;background:#fff;border-radius:8px;padding:6px 10px}
+  header h1{font-family:var(--serif);font-size:22px;font-weight:700}
+  header .sub{font-size:11px;opacity:.85;letter-spacing:.08em}
+  main{max-width:1080px;margin:0 auto;padding:24px 20px 60px}
+  h2{font-family:var(--serif);font-size:19px;margin:26px 0 10px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  button{background:var(--burgundy);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer}
+  button:hover{background:var(--burgundy-dark)}
+  button.ghost{background:#fff;color:var(--burgundy);border:1px solid var(--line)}
+  button.ghost:hover{background:#f6efe8}
+  button.small{padding:5px 10px;font-size:11px;border-radius:6px}
+  button.danger{background:#fff;color:#a33;border:1px solid #e2c8c8}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+  .cma-item{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+  .cma-item b{font-size:15px}
+  .cma-item .meta{font-size:12px;color:var(--mute)}
+  fieldset{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;background:var(--card)}
+  legend{font-family:var(--serif);font-weight:700;font-size:15px;color:var(--burgundy);padding:0 8px}
+  label{display:block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:3px;font-weight:700}
+  input,textarea,select{width:100%;border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:13px;font-family:var(--sans);background:#fff;color:var(--ink)}
+  textarea{resize:vertical;min-height:54px}
+  .grid{display:grid;gap:10px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g6{grid-template-columns:repeat(6,1fr)}
+  .comp-row{display:grid;gap:6px;margin-bottom:6px;align-items:start}
+  .comp-head{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:700}
+  .linkbox{background:#f4ede4;border:1px dashed var(--gold);border-radius:10px;padding:14px;margin:14px 0;word-break:break-all;font-size:12px;display:none}
+  .pill{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 10px;border-radius:99px;background:var(--burgundy);color:#fff;margin-right:6px}
+  .hint{font-size:11px;color:var(--mute);margin-top:4px;line-height:1.5}
+  #form-wrap{display:none}
+  .empty{color:var(--mute);font-size:13px;padding:14px}
+  @media (max-width:820px){ .g3,.g4,.g6{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<header>
+  <img src="assets/svr-logo.png" alt="Southern Visions Real Estate">
+  <div>
+    <h1>CMA Dashboard</h1>
+    <div class="sub">SOUTHERN VISIONS REAL ESTATE · DOUG WILKES</div>
+  </div>
+  <div style="margin-left:auto" class="row">
+    <button id="btn-new">+ New CMA</button>
+    <button class="ghost" id="btn-token">Short links: <span id="token-state">off</span></button>
+    <button class="ghost" id="btn-export">Export backup</button>
+    <button class="ghost" id="btn-import">Import backup</button>
+    <input type="file" id="import-file" accept=".json" style="display:none;width:auto">
+  </div>
+</header>
+<main>
+
+  <!-- ============ LIST VIEW ============ -->
+  <div id="list-wrap">
+    <h2>Saved CMAs</h2>
+    <div class="hint" style="margin-bottom:10px">Each saved CMA has its own shareable link — all the data lives inside the link itself, so it works for the client on any device. CMAs listed here are saved in this browser; use Export backup to keep a copy.</div>
+    <div id="cma-list"></div>
+  </div>
+
+  <!-- ============ FORM VIEW ============ -->
+  <div id="form-wrap">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <h2 style="margin:0" id="form-title">New CMA</h2>
+      <button class="ghost" id="btn-back">‹ Back to list</button>
+    </div>
+
+    <fieldset>
+      <legend>Client</legend>
+      <div class="grid g3">
+        <div><label>Client name(s) — appears on cover</label><input id="in-client" placeholder="Jane &amp; John Smith"></div>
+        <div><label>Client email</label><input id="in-email" type="email" placeholder="client@email.com"></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Subject Property</legend>
+      <div class="grid g3" style="margin-bottom:10px">
+        <div><label>Street address</label><input id="in-street" placeholder="118 Magnolia Ridge Court"></div>
+        <div><label>City, State Zip</label><input id="in-citystatezip" placeholder="Columbia, SC 29212"></div>
+        <div><label>Neighborhood</label><input id="in-neighborhood" placeholder="Friarsgate"></div>
+      </div>
+      <div class="grid g6" style="margin-bottom:10px">
+        <div><label>Beds</label><input id="in-beds" type="number" step="1"></div>
+        <div><label>Baths</label><input id="in-baths" type="number" step="0.5"></div>
+        <div><label>Heated SqFt</label><input id="in-sqft" type="number"></div>
+        <div><label>Year built</label><input id="in-year" type="number"></div>
+        <div><label>Lot (acres)</label><input id="in-lot" type="number" step="0.01"></div>
+        <div><label>Garage</label><input id="in-garage" placeholder="2-Car"></div>
+      </div>
+      <div><label>Condition notes (shown on the Subject Property page)</label><textarea id="in-condition"></textarea></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Financials &amp; Fees</legend>
+      <div class="grid g4" style="margin-bottom:10px">
+        <div><label>Mortgage payoff $</label><input id="in-payoff" type="number"></div>
+        <div><label>Annual taxes $</label><input id="in-taxes" type="number" step="0.01"></div>
+        <div><label>Annual insurance $</label><input id="in-insurance" type="number" step="0.01"></div>
+        <div><label>Annual HOA $</label><input id="in-hoa" type="number" step="0.01"></div>
+      </div>
+      <div class="grid g4">
+        <div><label>Target close date</label><input id="in-closedate" type="date"></div>
+        <div><label>Seller broker %</label><input id="in-sellerpct" type="number" step="0.5" value="3"></div>
+        <div><label>Buyer broker %</label><input id="in-buyerpct" type="number" step="0.5" value="3"></div>
+        <div><label>Deed prep $</label><input id="in-deedprep" type="number" value="500"></div>
+      </div>
+      <div class="hint">Deed stamps are computed at SC's 0.37% automatically. Optional extras (repairs, warranty, etc.) can be added after saving by editing.</div>
+      <div class="grid g6" style="margin-top:10px">
+        <div><label>Renovations $</label><input id="in-renov" type="number" value="0"></div>
+        <div><label>Repairs $</label><input id="in-repairs" type="number" value="0"></div>
+        <div><label>Warranty $</label><input id="in-warranty" type="number" value="0"></div>
+        <div><label>CL-100 $</label><input id="in-cl100" type="number" value="0"></div>
+        <div><label>Misc atty $</label><input id="in-misc" type="number" value="0"></div>
+        <div><label>Out-of-state %</label><input id="in-oos" type="number" step="0.5" value="0"></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Pricing Tiers</legend>
+      <div class="grid g3">
+        <div><label>Bottom — fast-sale floor $</label><input id="in-bottom" type="number"></div>
+        <div><label>Happy — most likely $</label><input id="in-happy" type="number"></div>
+        <div><label>Best — top of market $</label><input id="in-best" type="number"></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Comps</legend>
+      <div id="comps-editors"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Market Snapshot</legend>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Page title</label><input id="in-mtitle"></div>
+        <div><label>Subtitle</label><input id="in-msub"></div>
+      </div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Source line (footer)</label><input id="in-msource"></div>
+        <div><label>Trend chart title</label><input id="in-mtrendtitle"></div>
+      </div>
+      <div style="margin-bottom:10px"><label>KPI tiles — one per line: Label | Value | Sub</label><textarea id="in-mkpis" rows="6"></textarea></div>
+      <div class="grid g2">
+        <div><label>Trend bars — one per line: Label=Value</label><textarea id="in-mtrend" rows="6"></textarea></div>
+        <div><label>Caveat / fine print under the chart</label><textarea id="in-mcaveat" rows="6"></textarea></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Narrative (optional — leave blank for auto-generated text)</legend>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Active page — subtitle</label><input id="in-nactsub" placeholder="On the market right now in 29212 · pulled 7/29/26"></div>
+        <div><label>Active page — source footer</label><input id="in-nactsrc" placeholder="Source: Paragon MLS, pulled 7/29/26"></div>
+      </div>
+      <div style="margin-bottom:10px"><label>Active page — "read of the board" (blank = auto)</label><textarea id="in-nactread"></textarea></div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Sold page — source footer</label><input id="in-nsoldsrc" placeholder="Source: Paragon MLS CMA"></div>
+        <div><label>Expired page — source footer</label><input id="in-nexpsrc" placeholder="Source: Paragon MLS"></div>
+      </div>
+      <div><label>Expired page — "the lesson" (blank = auto)</label><textarea id="in-nexplesson"></textarea></div>
+    </fieldset>
+
+    <div class="row">
+      <button id="btn-save">Save &amp; Generate Link</button>
+      <button class="ghost" id="btn-preview">Preview without saving</button>
+    </div>
+
+    <div class="linkbox" id="linkbox">
+      <div style="margin-bottom:8px"><span class="pill" id="link-kind">Client link</span><span id="link-text"></span></div>
+      <div class="row">
+        <button class="small" id="btn-copy">Copy link</button>
+        <button class="small" id="btn-open">Open flipbook</button>
+        <button class="small" id="btn-email">Email to client</button>
+        <button class="small ghost" id="btn-shorten">Make it short</button>
+      </div>
+      <div class="hint" id="link-hint"></div>
+    </div>
+  </div>
+
+</main>
+<script>
+// ================= Template for a new CMA =================
+const BLANK = () => ({
+  client: { name: "", email: "" },
+  subject: { street: "", cityStateZip: "", neighborhood: "", beds: "", baths: "", sqft: "", yearBuilt: "", lot: "", garage: "",
+    condition: "", payoff: "", taxes: "", insurance: "", hoa: "", closeDate: "" },
+  fees: { deedStampRate: 0.0037, deedPrep: 500, sellerPct: 3, buyerPct: 3, cl100: 0, warranty: 0, misc: 0, renovations: 0, repairs: 0, specialAssessments: 0, outOfStatePct: 0 },
+  tiers: { bottom: "", happy: "", best: "" },
+  market: {
+    title: "Market Snapshot", sub: "", source: "Source: MLS", trendTitle: "Median sold price by quarter",
+    kpis: [
+      { label: "Sales analyzed", value: "", sub: "" },
+      { label: "Median sold price", value: "", sub: "" },
+      { label: "Median $/SqFt", value: "", sub: "" },
+      { label: "Median DOM", value: "", sub: "" },
+      { label: "Sold-to-list", value: "", sub: "" },
+      { label: "Took a price cut", value: "", sub: "" }
+    ],
+    trend: "", caveat: ""
+  },
+  comps: { active: [], pending: [], sold: [], expired: [] },
+  narrative: { activeSub: "", activeRead: "", activeSource: "", soldSource: "", expiredLesson: "", expiredSource: "" }
+});
+
+// ================= Storage =================
+const KEY = "svr-cmas";
+const loadAll = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+const saveAll = (list) => localStorage.setItem(KEY, JSON.stringify(list));
+let editingId = null;
+
+// ================= Helpers =================
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const makeLink = (data) => new URL("cma.html#z=" + LZString.compressToEncodedURIComponent(JSON.stringify(data)), location.href).href;
+
+// ================= Short links (unlisted GitHub gists) =================
+// A short link stores the CMA in an unlisted gist on your own GitHub account.
+// Only someone with the exact link can read it, and editing the CMA updates the
+// same gist — so a link you already emailed keeps working and shows the new numbers.
+const TOKEN_KEY = "svr-gh-token";
+const getToken = () => localStorage.getItem(TOKEN_KEY) || "";
+const shortLink = (gistId) => new URL("cma.html?g=" + gistId, location.href).href;
+const bestLink = (item) => (item.gistId ? shortLink(item.gistId) : makeLink(item.data));
+
+function refreshTokenState() {
+  $("token-state").textContent = getToken() ? "on" : "off";
+}
+$("btn-token").onclick = () => {
+  const current = getToken();
+  if (current && !confirm("Short links are on. Replace or remove the saved GitHub token?")) return;
+  const t = prompt(
+    "Paste a GitHub personal access token with the 'gist' scope.\n\n" +
+    "Create one at github.com/settings/tokens (classic, gist scope only).\n" +
+    "It is stored only in this browser and used to save each CMA to an unlisted gist.\n\n" +
+    "Leave blank to turn short links off.", current);
+  if (t === null) return;
+  if (t.trim()) localStorage.setItem(TOKEN_KEY, t.trim()); else localStorage.removeItem(TOKEN_KEY);
+  refreshTokenState();
+};
+
+async function pushGist(data, existingId) {
+  const token = getToken();
+  if (!token) throw new Error("no-token");
+  const body = {
+    description: `SVR CMA — ${data.subject.street || "property"} — ${data.client.name || "client"}`,
+    files: { "cma.json": { content: JSON.stringify(data) } },
+  };
+  if (!existingId) body.public = false;
+  const res = await fetch("https://api.github.com/gists" + (existingId ? "/" + existingId : ""), {
+    method: existingId ? "PATCH" : "POST",
+    headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (res.status === 401 || res.status === 403) throw new Error("bad-token");
+  if (res.status === 404 && existingId) return pushGist(data, null); // gist was deleted — make a new one
+  if (!res.ok) throw new Error("gist HTTP " + res.status);
+  return (await res.json()).id;
+}
+
+// ================= Comps editors =================
+const COMP_DEFS = [
+  { key: "active",  title: "Active — the competition",            cols: ["address","price","sqft","dom","note"] },
+  { key: "pending", title: "Pending — what buyers want",          cols: ["address","price","sqft","dom","note"] },
+  { key: "sold",    title: "Sold — what buyers paid",             cols: ["address","price","sqft","dom","closed","note"] },
+  { key: "expired", title: "Expired — what buyers didn't want",   cols: ["address","price","origPrice","sqft","dom","note"] },
+];
+const COL_LABEL = { address:"Address", price:"Price $", origPrice:"Orig ask $", sqft:"SqFt", dom:"DOM", closed:"Closed", note:"Note" };
+const COL_WIDTH = { address:"1.6fr", price:".8fr", origPrice:".8fr", sqft:".6fr", dom:".5fr", closed:".7fr", note:"2fr" };
+
+function compEditorHTML() {
+  return COMP_DEFS.map(def => `
+    <div style="margin-bottom:14px">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px">
+        <b style="font-size:13px">${def.title}</b>
+        <button class="small ghost" type="button" onclick="addCompRow('${def.key}')">+ Add row</button>
+      </div>
+      <div class="comp-row comp-head" style="grid-template-columns:${def.cols.map(c=>COL_WIDTH[c]).join(" ")} 28px">
+        ${def.cols.map(c=>`<span>${COL_LABEL[c]}</span>`).join("")}<span></span>
+      </div>
+      <div id="rows-${def.key}"></div>
+    </div>`).join("");
+}
+function addCompRow(key, vals = {}) {
+  const def = COMP_DEFS.find(d => d.key === key);
+  const div = document.createElement("div");
+  div.className = "comp-row";
+  div.style.gridTemplateColumns = def.cols.map(c => COL_WIDTH[c]).join(" ") + " 28px";
+  div.innerHTML = def.cols.map(c =>
+    `<input data-col="${c}" value="${esc(vals[c] ?? "")}" ${["price","origPrice","sqft","dom"].includes(c) ? 'type="number"' : ""}>`).join("") +
+    `<button class="small danger" type="button" onclick="this.parentElement.remove()">✕</button>`;
+  $("rows-" + key).appendChild(div);
+}
+function collectComps() {
+  const out = {};
+  for (const def of COMP_DEFS) {
+    out[def.key] = [...$("rows-" + def.key).children].map(row => {
+      const o = {};
+      row.querySelectorAll("input").forEach(inp => { o[inp.dataset.col] = inp.type === "number" ? (inp.value === "" ? "" : Number(inp.value)) : inp.value; });
+      return o;
+    }).filter(o => o.address);
+  }
+  return out;
+}
+
+// ================= Form <-> data =================
+function fillForm(d) {
+  $("in-client").value = d.client.name || ""; $("in-email").value = d.client.email || "";
+  const s = d.subject;
+  $("in-street").value = s.street || ""; $("in-citystatezip").value = s.cityStateZip || ""; $("in-neighborhood").value = s.neighborhood || "";
+  $("in-beds").value = s.beds ?? ""; $("in-baths").value = s.baths ?? ""; $("in-sqft").value = s.sqft ?? "";
+  $("in-year").value = s.yearBuilt ?? ""; $("in-lot").value = s.lot ?? ""; $("in-garage").value = s.garage || "";
+  $("in-condition").value = s.condition || "";
+  $("in-payoff").value = s.payoff ?? ""; $("in-taxes").value = s.taxes ?? ""; $("in-insurance").value = s.insurance ?? ""; $("in-hoa").value = s.hoa ?? "";
+  $("in-closedate").value = s.closeDate || "";
+  const f = d.fees;
+  $("in-sellerpct").value = f.sellerPct; $("in-buyerpct").value = f.buyerPct; $("in-deedprep").value = f.deedPrep;
+  $("in-renov").value = f.renovations || 0; $("in-repairs").value = f.repairs || 0; $("in-warranty").value = f.warranty || 0;
+  $("in-cl100").value = f.cl100 || 0; $("in-misc").value = f.misc || 0; $("in-oos").value = f.outOfStatePct || 0;
+  $("in-bottom").value = d.tiers.bottom ?? ""; $("in-happy").value = d.tiers.happy ?? ""; $("in-best").value = d.tiers.best ?? "";
+  const m = d.market;
+  $("in-mtitle").value = m.title || ""; $("in-msub").value = m.sub || ""; $("in-msource").value = m.source || ""; $("in-mtrendtitle").value = m.trendTitle || "";
+  $("in-mkpis").value = (m.kpis || []).map(k => `${k.label} | ${k.value} | ${k.sub}`).join("\n");
+  $("in-mtrend").value = m.trend || ""; $("in-mcaveat").value = m.caveat || "";
+  const n = d.narrative || {};
+  $("in-nactsub").value = n.activeSub || ""; $("in-nactsrc").value = n.activeSource || ""; $("in-nactread").value = n.activeRead || "";
+  $("in-nsoldsrc").value = n.soldSource || ""; $("in-nexpsrc").value = n.expiredSource || ""; $("in-nexplesson").value = n.expiredLesson || "";
+  for (const def of COMP_DEFS) {
+    $("rows-" + def.key).innerHTML = "";
+    (d.comps[def.key] || []).forEach(row => addCompRow(def.key, row));
+  }
+}
+function readForm() {
+  const d = BLANK();
+  d.client.name = $("in-client").value.trim(); d.client.email = $("in-email").value.trim();
+  const s = d.subject;
+  s.street = $("in-street").value.trim(); s.cityStateZip = $("in-citystatezip").value.trim(); s.neighborhood = $("in-neighborhood").value.trim();
+  s.beds = $("in-beds").value; s.baths = $("in-baths").value; s.sqft = Number($("in-sqft").value) || "";
+  s.yearBuilt = $("in-year").value; s.lot = $("in-lot").value; s.garage = $("in-garage").value.trim();
+  s.condition = $("in-condition").value.trim();
+  s.payoff = Number($("in-payoff").value) || 0; s.taxes = Number($("in-taxes").value) || 0;
+  s.insurance = Number($("in-insurance").value) || 0; s.hoa = Number($("in-hoa").value) || 0;
+  s.closeDate = $("in-closedate").value;
+  const f = d.fees;
+  f.sellerPct = Number($("in-sellerpct").value) || 0; f.buyerPct = Number($("in-buyerpct").value) || 0;
+  f.deedPrep = Number($("in-deedprep").value) || 0; f.renovations = Number($("in-renov").value) || 0;
+  f.repairs = Number($("in-repairs").value) || 0; f.warranty = Number($("in-warranty").value) || 0;
+  f.cl100 = Number($("in-cl100").value) || 0; f.misc = Number($("in-misc").value) || 0; f.outOfStatePct = Number($("in-oos").value) || 0;
+  d.tiers.bottom = Number($("in-bottom").value) || 0; d.tiers.happy = Number($("in-happy").value) || 0; d.tiers.best = Number($("in-best").value) || 0;
+  const m = d.market;
+  m.title = $("in-mtitle").value.trim() || "Market Snapshot"; m.sub = $("in-msub").value.trim();
+  m.source = $("in-msource").value.trim() || "Source: MLS"; m.trendTitle = $("in-mtrendtitle").value.trim() || "Trend";
+  m.kpis = $("in-mkpis").value.split("\n").map(l => l.trim()).filter(Boolean).map(l => {
+    const [label = "", value = "", sub = ""] = l.split("|").map(x => x.trim());
+    return { label, value, sub };
+  }).filter(k => k.label && k.value);
+  m.trend = $("in-mtrend").value.trim(); m.caveat = $("in-mcaveat").value.trim();
+  const n = d.narrative;
+  n.activeSub = $("in-nactsub").value.trim(); n.activeSource = $("in-nactsrc").value.trim(); n.activeRead = $("in-nactread").value.trim();
+  n.soldSource = $("in-nsoldsrc").value.trim(); n.expiredSource = $("in-nexpsrc").value.trim(); n.expiredLesson = $("in-nexplesson").value.trim();
+  d.comps = collectComps();
+  return d;
+}
+
+// ================= List view =================
+function renderList() {
+  const list = loadAll().sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+  $("cma-list").innerHTML = list.length ? list.map(item => {
+    const d = item.data;
+    return `<div class="card cma-item">
+      <div>
+        <b>${esc(d.subject.street || "(no address)")}</b> — ${esc(d.client.name || "(no client)")}
+        <div class="meta">${esc(d.subject.cityStateZip || "")} · updated ${new Date(item.updatedAt).toLocaleDateString("en-US")} · tiers ${d.tiers.bottom ? "$" + Number(d.tiers.bottom).toLocaleString() : "—"} / ${d.tiers.happy ? "$" + Number(d.tiers.happy).toLocaleString() : "—"} / ${d.tiers.best ? "$" + Number(d.tiers.best).toLocaleString() : "—"}</div>
+      </div>
+      <div class="row">
+        <button class="small" onclick="openCMA('${item.id}')">Open</button>
+        <button class="small ghost" onclick="copyCMA('${item.id}')">Copy ${item.gistId ? "short " : ""}link</button>
+        <button class="small ghost" onclick="emailCMA('${item.id}')">Email</button>
+        ${item.gistId ? "" : `<button class="small ghost" onclick="shortenCMA('${item.id}')">Make it short</button>`}
+        <button class="small ghost" onclick="editCMA('${item.id}')">Edit</button>
+        <button class="small ghost" onclick="dupCMA('${item.id}')">Duplicate</button>
+        <button class="small danger" onclick="delCMA('${item.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join("") : `<div class="card empty">No CMAs yet. Click <b>+ New CMA</b> to create your first one.</div>`;
+}
+const byId = (id) => loadAll().find(x => x.id === id);
+window.openCMA = (id) => window.open(bestLink(byId(id)), "_blank");
+window.copyCMA = async (id) => { await navigator.clipboard.writeText(bestLink(byId(id))); alert("Link copied to clipboard."); };
+window.shortenCMA = async (id) => {
+  if (!getToken()) { alert("Turn on short links first — click \"Short links: off\" in the top bar."); return; }
+  try {
+    const list = loadAll(), item = list.find(x => x.id === id);
+    item.gistId = await pushGist(item.data, item.gistId);
+    saveAll(list); renderList();
+    await navigator.clipboard.writeText(shortLink(item.gistId));
+    alert("Short link created and copied:\n\n" + shortLink(item.gistId));
+  } catch (e) {
+    alert(e.message === "bad-token"
+      ? "GitHub rejected that token. Check it has the 'gist' scope and hasn't expired."
+      : "Could not create the short link: " + e.message);
+  }
+};
+window.emailCMA = (id) => {
+  const item = byId(id), d = item.data, link = bestLink(item);
+  const subject = `Your Home Value Report — ${d.subject.street}`;
+  const body = `Hi ${d.client.name || ""},\n\nYour personalized market analysis for ${d.subject.street} is ready. Open it here:\n\n${link}\n\nFlip through it like a book — every number in it comes straight from the MLS. Call or text me with any questions.\n\nDoug Wilkes\nSouthern Visions Real Estate\nC: 843-364-3346 · O: 803-359-9571\ndwilkes@svrealty.com`;
+  location.href = `mailto:${encodeURIComponent(d.client.email || "")}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};
+window.editCMA = (id) => { const item = byId(id); editingId = id; $("form-title").textContent = "Edit CMA — " + (item.data.subject.street || ""); fillForm(item.data); showForm(); };
+window.dupCMA = (id) => {
+  const list = loadAll(); const src = list.find(x => x.id === id);
+  const copy = { id: crypto.randomUUID(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), data: JSON.parse(JSON.stringify(src.data)) };
+  copy.data.client.name = ""; copy.data.client.email = "";
+  list.push(copy); saveAll(list); renderList();
+};
+window.delCMA = async (id) => {
+  const item = byId(id);
+  const msg = item.gistId
+    ? "Delete this CMA and its short link? Any link you already sent will stop working."
+    : "Delete this CMA? Long links you already sent carry their own data, so they will keep working.";
+  if (!confirm(msg)) return;
+  if (item.gistId && getToken()) {
+    try {
+      await fetch("https://api.github.com/gists/" + item.gistId, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + getToken(), Accept: "application/vnd.github+json" },
+      });
+    } catch (e) { console.warn("Could not delete the gist; remove it manually at gist.github.com.", e); }
+  }
+  saveAll(loadAll().filter(x => x.id !== id));
+  renderList();
+};
+
+// ================= Form view =================
+function showForm() { $("list-wrap").style.display = "none"; $("form-wrap").style.display = "block"; $("linkbox").style.display = "none"; window.scrollTo(0, 0); }
+function showList() { $("form-wrap").style.display = "none"; $("list-wrap").style.display = "block"; renderList(); }
+$("btn-new").onclick = () => { editingId = null; $("form-title").textContent = "New CMA"; fillForm(seedDefaults()); showForm(); };
+$("btn-back").onclick = showList;
+
+// New CMAs start with Doug's standard fees + the latest market snapshot he saved.
+function seedDefaults() {
+  const d = BLANK();
+  const last = loadAll().sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""))[0];
+  if (last) d.market = JSON.parse(JSON.stringify(last.data.market));
+  return d;
+}
+
+function showLink(item) {
+  const link = bestLink(item);
+  const isShort = !!item.gistId;
+  $("link-kind").textContent = isShort ? "Short client link" : "Client link";
+  $("link-text").textContent = link;
+  $("link-hint").textContent = isShort
+    ? "Stored in an unlisted gist on your GitHub. Editing this CMA updates the same link, so anything you already emailed shows the new numbers."
+    : "This link carries all the data inside it, so it works forever with no hosting. It's long — click \"Make it short\" for a tidy one you can text or read aloud.";
+  $("btn-shorten").style.display = isShort ? "none" : "inline-block";
+  $("btn-copy").onclick = async () => { await navigator.clipboard.writeText(link); alert("Link copied."); };
+  $("btn-open").onclick = () => window.open(link, "_blank");
+  $("btn-email").onclick = () => emailCMA(item.id);
+  $("btn-shorten").onclick = async () => { await shortenCMA(item.id); showLink(byId(item.id)); };
+  $("linkbox").style.display = "block";
+  $("linkbox").scrollIntoView({ behavior: "smooth" });
+}
+
+$("btn-save").onclick = async () => {
+  const data = readForm();
+  if (!data.subject.street) { alert("Enter at least the street address."); return; }
+  const list = loadAll(); const now = new Date().toISOString();
+  let item;
+  if (editingId) {
+    item = list.find(x => x.id === editingId);
+    item.data = data; item.updatedAt = now;
+  } else {
+    editingId = crypto.randomUUID();
+    item = { id: editingId, createdAt: now, updatedAt: now, data };
+    list.push(item);
+  }
+  // With short links on, save straight to the gist so the link is ready to send.
+  if (getToken()) {
+    try { item.gistId = await pushGist(data, item.gistId); }
+    catch (e) {
+      alert(e.message === "bad-token"
+        ? "GitHub rejected the saved token, so this CMA got a long link instead. Check the token's 'gist' scope."
+        : "Couldn't reach GitHub, so this CMA got a long link instead. (" + e.message + ")");
+    }
+  }
+  saveAll(list);
+  showLink(item);
+};
+$("btn-preview").onclick = () => window.open(makeLink(readForm()), "_blank");
+
+// ================= Backup =================
+$("btn-export").onclick = () => {
+  const blob = new Blob([JSON.stringify(loadAll(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "svr-cmas-backup.json";
+  a.click();
+};
+$("btn-import").onclick = () => $("import-file").click();
+$("import-file").onchange = (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const incoming = JSON.parse(r.result);
+      if (!Array.isArray(incoming)) throw new Error("bad format");
+      const list = loadAll();
+      const ids = new Set(list.map(x => x.id));
+      incoming.forEach(x => { if (!ids.has(x.id)) list.push(x); });
+      saveAll(list); renderList(); alert("Backup imported.");
+    } catch { alert("That file doesn't look like a CMA backup."); }
+  };
+  r.readAsText(file);
+};
+
+// ================= Init =================
+$("comps-editors").innerHTML = compEditorHTML();
+refreshTokenState();
+renderList();
+</script>
+</body>
+</html>

@@ -32,6 +32,12 @@
   table.cma tr:last-child td{border-bottom:none}
   .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .note{font-size:9.5px;color:var(--mute);line-height:1.45;margin-top:8px}
+  /* "View live MLS report" buttons — only rendered when a link was entered. */
+  .linkrow{margin:-6px 0 12px}
+  .linkrow:empty{display:none}
+  .mlslink{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    padding:3px 10px;border-radius:99px;border:1px solid var(--burgundy);color:var(--burgundy);
+    text-decoration:none;background:#fff;margin-right:6px}
   .cardbox{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
   .cover{background:linear-gradient(160deg,var(--burgundy) 0%,var(--burgundy-dark) 78%);color:#fff;position:relative}
   .cover .page-content{padding:44px 40px 30px}
@@ -236,6 +242,7 @@
         <div class="kicker">Market Snapshot</div>
         <h2 class="pg" id="m-title">Sample Market — Last 24 Months</h2>
         <div class="sub" id="m-sub"></div>
+        <div class="linkrow" id="m-link"></div>
         <div class="kpis" id="m-kpis"></div>
         <div class="cardbox">
           <b style="font-size:11px" id="m-trend-title">Median sold price by quarter</b>
@@ -290,6 +297,7 @@
         <div class="kicker">The Competition</div>
         <h2 class="pg">Active — Who We're Up Against</h2>
         <div class="sub"><span class="tag" style="background:var(--active)">Active</span>&nbsp; <span id="act-sub">On the market right now</span></div>
+        <div class="linkrow" id="act-link"></div>
         <table class="cma">
           <thead><tr><th>Address</th><th class="num">List</th><th class="num">SqFt</th><th class="num">$/SF</th><th class="num">DOM</th></tr></thead>
           <tbody id="act-tbody"></tbody>
@@ -308,12 +316,14 @@
         <div class="kicker">The Competition</div>
         <h2 class="pg">What Buyers Actually Paid</h2>
         <div class="sub"><span class="tag" style="background:var(--sold)">Sold</span>&nbsp; Closed sales · most-comparable set</div>
+        <div class="linkrow" id="sold-link"></div>
         <table class="cma">
           <thead><tr><th>Address</th><th class="num">Sold</th><th class="num">SqFt</th><th class="num">$/SF</th><th class="num">DOM</th><th>Closed</th></tr></thead>
           <tbody id="sold-tbody"></tbody>
         </table>
         <div id="pend-block">
           <div class="sub" style="margin-top:12px"><span class="tag" style="background:var(--pending)">Pending</span>&nbsp; Under contract now</div>
+          <div class="linkrow" id="pend-link"></div>
           <table class="cma">
             <thead><tr><th>Address</th><th class="num">List</th><th class="num">SqFt</th><th class="num">$/SF</th><th class="num">DOM</th></tr></thead>
             <tbody id="pend-tbody"></tbody>
@@ -330,6 +340,7 @@
         <div class="kicker">The Competition</div>
         <h2 class="pg">What Buyers Didn't Want</h2>
         <div class="sub"><span class="tag" style="background:var(--expired)">Expired</span>&nbsp; Listings that died on the vine</div>
+        <div class="linkrow" id="exp-link"></div>
         <table class="cma">
           <thead><tr><th>Address</th><th class="num">Last ask</th><th class="num">Orig ask</th><th class="num">SqFt</th><th class="num">DOM</th></tr></thead>
           <tbody id="exp-tbody"></tbody>
@@ -474,6 +485,9 @@ const DEFAULT_DATA = {
       { address: "10 Timbertrail Court", price: 410000, origPrice: 410000, sqft: 2700, dom: 166, note: "Zero price movement in 166 days — the market moved on without it." }
     ]
   },
+  // Live MLS report links, per section. Blank in the sample — real share links
+  // belong in a client's own link/gist, never in this public repo.
+  links: { active: "", pending: "", sold: "", expired: "", market: "" },
   narrative: {
     activeSub: "Sample report · your report shows the homes competing with yours right now",
     activeRead: "",
@@ -532,6 +546,16 @@ const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 // ================= Render =================
 function render(d) {
   const s = d.subject, t = d.tiers, f = d.fees, c = d.comps, m = d.market, n = d.narrative || {};
+  const L = d.links || {};
+
+  // Render a "View live MLS report" button, but only for links that are real URLs.
+  const setLink = (elId, url, label) => {
+    const el = $id(elId);
+    if (!el) return;
+    const u = String(url || "").trim();
+    if (!/^https?:\/\//i.test(u)) { el.innerHTML = ""; return; }
+    el.innerHTML = `<a class="mlslink" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`;
+  };
 
   $id("c-address").innerHTML = esc(s.street) + "<br>" + esc(s.cityStateZip);
   $id("c-client").textContent = d.client.name || "You";
@@ -598,6 +622,11 @@ function render(d) {
   $id("act-source").textContent = n.activeSource || "Source: MLS";
   $id("sold-source").textContent = n.soldSource || "Source: MLS";
   $id("exp-source").textContent = n.expiredSource || "Source: MLS";
+  setLink("m-link", L.market, "View the full market report");
+  setLink("act-link", L.active, "View live MLS report");
+  setLink("sold-link", L.sold, "View the full sold CMA report");
+  setLink("pend-link", L.pending, "View live MLS report");
+  setLink("exp-link", L.expired, "View live MLS report");
   $id("act-read").innerHTML = n.activeRead ? esc(n.activeRead) :
     `Every listing above is a home your buyer will tour before or after yours. There is open space in the <b style="color:var(--burgundy)">${fmt$(t.bottom)}–${fmt$(t.best)}</b> lane for a well-presented, correctly priced home — that's the gap we position you in.`;
   $id("exp-lesson").innerHTML = n.expiredLesson ? esc(n.expiredLesson) :

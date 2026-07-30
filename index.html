@@ -145,6 +145,20 @@
     </fieldset>
 
     <fieldset>
+      <legend>Live MLS Report Links</legend>
+      <div class="hint" style="margin-bottom:8px">Optional. Each link becomes a small <b>"View live MLS report ↗"</b> button on that page of the client's flipbook, so they can click through to the raw MLS data behind your pricing. Paste your Paragon CollabLink (or PDF) URLs — they travel inside this client's link only, never into the public repo.</div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Active competition report</label><input id="in-lk-active" placeholder="https://..."></div>
+        <div><label>Pending report</label><input id="in-lk-pending" placeholder="https://..."></div>
+      </div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Sold comps / full CMA report</label><input id="in-lk-sold" placeholder="https://..."></div>
+        <div><label>Expired listings report</label><input id="in-lk-expired" placeholder="https://..."></div>
+      </div>
+      <div><label>24-month market report</label><input id="in-lk-market" placeholder="https://..."></div>
+    </fieldset>
+
+    <fieldset>
       <legend>Market Snapshot</legend>
       <div class="grid g2" style="margin-bottom:10px">
         <div><label>Page title</label><input id="in-mtitle"></div>
@@ -214,8 +228,10 @@ const BLANK = () => ({
     trend: "", caveat: ""
   },
   comps: { active: [], pending: [], sold: [], expired: [] },
+  links: { active: "", pending: "", sold: "", expired: "", market: "" },
   narrative: { activeSub: "", activeRead: "", activeSource: "", soldSource: "", expiredLesson: "", expiredSource: "" }
 });
+const LINK_KEYS = ["active", "pending", "sold", "expired", "market"];
 
 // ================= Storage =================
 const KEY = "svr-cmas";
@@ -336,6 +352,8 @@ function fillForm(d) {
   $("in-mtitle").value = m.title || ""; $("in-msub").value = m.sub || ""; $("in-msource").value = m.source || ""; $("in-mtrendtitle").value = m.trendTitle || "";
   $("in-mkpis").value = (m.kpis || []).map(k => `${k.label} | ${k.value} | ${k.sub}`).join("\n");
   $("in-mtrend").value = m.trend || ""; $("in-mcaveat").value = m.caveat || "";
+  const lk = d.links || {};
+  LINK_KEYS.forEach(k => { $("in-lk-" + k).value = lk[k] || ""; });
   const n = d.narrative || {};
   $("in-nactsub").value = n.activeSub || ""; $("in-nactsrc").value = n.activeSource || ""; $("in-nactread").value = n.activeRead || "";
   $("in-nsoldsrc").value = n.soldSource || ""; $("in-nexpsrc").value = n.expiredSource || ""; $("in-nexplesson").value = n.expiredLesson || "";
@@ -369,6 +387,7 @@ function readForm() {
     return { label, value, sub };
   }).filter(k => k.label && k.value);
   m.trend = $("in-mtrend").value.trim(); m.caveat = $("in-mcaveat").value.trim();
+  LINK_KEYS.forEach(k => { d.links[k] = $("in-lk-" + k).value.trim(); });
   const n = d.narrative;
   n.activeSub = $("in-nactsub").value.trim(); n.activeSource = $("in-nactsrc").value.trim(); n.activeRead = $("in-nactread").value.trim();
   n.soldSource = $("in-nsoldsrc").value.trim(); n.expiredSource = $("in-nexpsrc").value.trim(); n.expiredLesson = $("in-nexplesson").value.trim();

@@ -494,7 +494,8 @@ const DEFAULT_DATA = {
     activeSource: "Sample report — figures are illustrative",
     soldSource: "Sample report — figures are illustrative",
     expiredLesson: "",
-    expiredSource: "Sample report — figures are illustrative"
+    expiredSource: "Sample report — figures are illustrative",
+    timeMoney: ""
   }
 };
 
@@ -599,7 +600,8 @@ function render(d) {
 
   // Time vs money
   const happy = num(t.happy);
-  $id("tvm-note").innerHTML = `Homes that sell in the first three weeks keep ~99% of asking price. After day 30, sellers give up 4–6% — on a <b style="color:var(--burgundy)">${fmt$(happy)}</b> sale that's <b style="color:var(--burgundy)">${fmt$(happy * .04)}–${fmt$(happy * .06)}</b> of your equity. Pricing right on day one isn't cautious, it's how you protect your net.`;
+  $id("tvm-note").innerHTML = n.timeMoney ? esc(n.timeMoney).replace(/\$[\d,]+/g, (mm) => `<b style="color:var(--burgundy)">${mm}</b>`)
+    : `Homes that sell in the first three weeks keep ~99% of asking price. After day 30, sellers give up 4–6% — on a <b style="color:var(--burgundy)">${fmt$(happy)}</b> sale that's <b style="color:var(--burgundy)">${fmt$(happy * .04)}–${fmt$(happy * .06)}</b> of your equity. Pricing right on day one isn't cautious, it's how you protect your net.`;
 
   // Comps tables
   const noteTd = (x) => `<b>${esc(x.address)}</b>${x.note ? `<br><span style="color:var(--mute)">${esc(x.note)}</span>` : ""}`;

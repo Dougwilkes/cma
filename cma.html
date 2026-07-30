@@ -247,7 +247,7 @@
         <div class="cardbox">
           <b style="font-size:11px" id="m-trend-title">Median sold price by quarter</b>
           <svg id="m-trend" viewBox="0 0 460 112" style="width:100%;margin-top:6px"></svg>
-          <div class="note" id="m-caveat"></div>
+          <div class="note" id="m-caveat" style="margin-top:0"></div>
         </div>
         <div class="foot"><span id="m-source">Source: Paragon MLS</span><span>16</span></div>
       </div>
@@ -577,6 +577,13 @@ function render(d) {
   const rows = String(m.trend || "").split("\n").map(l => l.trim()).filter(Boolean)
     .map(l => { const i = l.lastIndexOf("="); return { q: l.slice(0, i).trim(), v: num(l.slice(i + 1)) }; })
     .filter(r => r.q && r.v > 0);
+  // No trend data entered -> hide the chart and its heading rather than showing
+  // an empty box. The caveat text still shows if there is one.
+  if (!rows.length) {
+    $id("m-trend-title").style.display = "none";
+    $id("m-trend").style.display = "none";
+    if (!m.caveat) $id("m-caveat").parentElement.style.display = "none";
+  }
   if (rows.length) {
     const vmin = Math.min(...rows.map(r => r.v)), vmax = Math.max(...rows.map(r => r.v));
     const step = 450 / rows.length, bw = Math.min(34, step - 10);

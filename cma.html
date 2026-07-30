@@ -26,18 +26,23 @@
   .sub{font-size:11px;color:var(--mute);margin-bottom:14px}
   .foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:9px;color:var(--mute);letter-spacing:.06em}
   .tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:99px;color:#fff}
-  table.cma{width:100%;border-collapse:collapse;font-size:10.5px;background:var(--card)}
-  table.cma th{background:var(--ink);color:#fff;text-align:left;padding:5px 7px;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
-  table.cma td{padding:5px 7px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.cma{width:100%;border-collapse:collapse;font-size:11.5px;background:var(--card);color:var(--ink)}
+  table.cma th{background:var(--ink);color:#fff;text-align:left;padding:6px 8px;font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+  table.cma td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.cma td b{font-size:12px}
+  .compnote{color:#454A50;font-size:10.5px}
   table.cma tr:last-child td{border-bottom:none}
   .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .note{font-size:9.5px;color:var(--mute);line-height:1.45;margin-top:8px}
   /* "View live MLS report" buttons — only rendered when a link was entered. */
   .linkrow{margin:-6px 0 12px}
   .linkrow:empty{display:none}
-  .mlslink{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-    padding:3px 10px;border-radius:99px;border:1px solid var(--burgundy);color:var(--burgundy);
+  .mlslink{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+    padding:4px 12px;border-radius:99px;border:1px solid var(--burgundy);color:var(--burgundy);
     text-decoration:none;background:#fff;margin-right:6px}
+  /* Prominent, centered market-report button that sits below the chart. */
+  #m-link{margin-top:14px;text-align:center}
+  #m-link .mlslink{font-size:11.5px;padding:9px 22px;background:var(--burgundy);color:#fff;letter-spacing:.08em}
   .cardbox{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
   .cover{background:linear-gradient(160deg,var(--burgundy) 0%,var(--burgundy-dark) 78%);color:#fff;position:relative}
   .cover .page-content{padding:44px 40px 30px}
@@ -60,11 +65,11 @@
   .fact{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;text-align:center}
   .fact .v{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--burgundy)}
   .fact .l{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:2px}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
-  .kpi .v{font-family:var(--serif);font-size:17px;font-weight:700}
-  .kpi .l{font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-  .kpi .s{font-size:8.5px;color:var(--mute)}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:16px 12px}
+  .kpi .v{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1}
+  .kpi .l{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-top:6px}
+  .kpi .s{font-size:10px;color:var(--mute);margin-top:2px}
   .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
   .tier{border-radius:10px;padding:14px 10px;text-align:center;color:#fff}
   .tier .l{font-size:9px;letter-spacing:.18em;text-transform:uppercase;opacity:.85}
@@ -152,7 +157,7 @@
         <div class="cardbox">
           <b style="font-size:12px">What that means for your sale</b>
           <div style="font-size:10.5px;color:var(--mute);margin-top:4px;line-height:1.5">
-            Doug and his teammates Gregory and Aimee close roughly <b style="color:var(--burgundy)">$20 million</b> a year across the Midlands, so your price isn't a guess — it's read off deals actually happening in Lexington, Richland, and Newberry counties. He negotiates structure as well as price (owner financing, repair credits, rate buy-downs, flexible closing dates), which is often what saves a deal when the inspection or appraisal comes back imperfect. From listing day to the closing table he coordinates the photographer, inspectors, appraiser, lender, and attorney himself.
+            Doug and his teammates Gregory and Aimee close roughly <b style="color:var(--burgundy)">$20 million</b> a year across the Midlands, so your price isn't a guess — it's read off deals actually happening in Lexington, Richland, and Newberry counties. The team negotiates structure as well as price (owner financing, repair credits, rate buy-downs, flexible closing dates), which is often what saves a deal when the inspection or appraisal comes back imperfect. From listing day to the closing table you get the whole team: <b style="color:var(--ink)">Doug is boots on the ground, Aimee runs the administration, and Gregory drives deal execution</b> — and we share the load and back each other up.
           </div>
         </div>
         <div class="cardbox" style="margin-top:9px">
@@ -203,12 +208,47 @@
     <div class="page imgpage"><img src="assets/resume-p04.jpg" alt="My Commitments to You"></div>
     <div class="page imgpage"><img src="assets/resume-p05.jpg" alt="Mission Statement"></div>
     <div class="page imgpage"><img src="assets/resume-p06.jpg" alt="Southern Visions Real Estate Resume — Neighborhoods Developed"></div>
-    <div class="page imgpage"><img src="assets/resume-p07.jpg" alt="Southern Visions Real Estate Resume — Current Projects"></div>
     <div class="page imgpage"><img src="assets/resume-p08.jpg" alt="Photography — professional photos sell 32% faster"></div>
     <div class="page imgpage"><img src="assets/resume-p09.jpg" alt="The Listing Process — steps 1-6"></div>
     <div class="page imgpage"><img src="assets/resume-p10.jpg" alt="The Listing Process — steps 7-15"></div>
     <div class="page imgpage"><img src="assets/resume-p11.jpg" alt="Marketing Plan of Action"></div>
     <div class="page imgpage"><img src="assets/resume-p12.jpg" alt="My No Risk Listing Program"></div>
+
+    <!-- 14 · COMPENSATION IN PLAIN TERMS -->
+    <div class="page">
+      <div class="page-content">
+        <div class="kicker">Risk Mitigation</div>
+        <h2 class="pg">Compensation, in Plain Terms</h2>
+        <div class="sub">How the numbers on the previous page actually work.</div>
+        <div class="cardbox">
+          <div style="font-size:12.5px;color:var(--ink);line-height:1.6">
+            The <b>2% / 3% / 4%</b> tiers on the previous page are the <b style="color:var(--burgundy)">listing side only</b> — what you pay me to represent you and run the sale.
+          </div>
+        </div>
+        <div class="cardbox" style="margin-top:12px">
+          <b style="font-size:13px">My recommendation: a 6% gross commission</b>
+          <div style="font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:6px">
+            To stay competitive with everything else a buyer's agent is showing, I recommend a <b style="color:var(--burgundy)">6% gross commission, split 50/50</b> with the buyer's broker — <b>3% to the listing side, 3% to the buyer's side</b>. Offering a full co-op keeps your home on every buyer agent's list instead of quietly skipped.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+            <div style="text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 10px">
+              <div style="font-family:var(--serif);font-size:30px;font-weight:700;color:var(--burgundy)">3%</div>
+              <div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-top:4px">Listing side</div>
+              <div style="font-size:11px;color:var(--ink);margin-top:2px">Southern Visions — Doug &amp; team</div>
+            </div>
+            <div style="text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px 10px">
+              <div style="font-family:var(--serif);font-size:30px;font-weight:700;color:var(--gold)">3%</div>
+              <div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-top:4px">Buyer side</div>
+              <div style="font-size:11px;color:var(--ink);margin-top:2px">The buyer's broker</div>
+            </div>
+          </div>
+        </div>
+        <div class="cardbox" style="margin-top:12px">
+          <div style="font-size:12px;color:var(--ink);line-height:1.55">Both sides are already built into the Seller Net Sheet ahead, so the bottom-line numbers you see there assume this full 6% — no surprises at closing.</div>
+        </div>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>14</span></div>
+      </div>
+    </div>
 
     <!-- 15 · SUBJECT PROPERTY -->
     <div class="page">
@@ -242,13 +282,13 @@
         <div class="kicker">Market Snapshot</div>
         <h2 class="pg" id="m-title">Sample Market — Last 24 Months</h2>
         <div class="sub" id="m-sub"></div>
-        <div class="linkrow" id="m-link"></div>
         <div class="kpis" id="m-kpis"></div>
         <div class="cardbox">
-          <b style="font-size:11px" id="m-trend-title">Median sold price by quarter</b>
-          <svg id="m-trend" viewBox="0 0 460 112" style="width:100%;margin-top:6px"></svg>
-          <div class="note" id="m-caveat" style="margin-top:0"></div>
+          <b style="font-size:12.5px" id="m-trend-title">Median sold price by quarter</b>
+          <svg id="m-trend" viewBox="0 0 460 150" style="width:100%;margin-top:8px"></svg>
+          <div class="note" id="m-caveat" style="margin-top:2px;font-size:11px;line-height:1.5;color:var(--ink)"></div>
         </div>
+        <div class="linkrow" id="m-link"></div>
         <div class="foot"><span id="m-source">Source: Paragon MLS</span><span>16</span></div>
       </div>
     </div>
@@ -303,8 +343,8 @@
           <tbody id="act-tbody"></tbody>
         </table>
         <div class="cardbox" style="margin-top:10px">
-          <b style="font-size:12px">Read of the board</b>
-          <div style="font-size:11px;color:var(--mute);margin-top:4px;line-height:1.55" id="act-read"></div>
+          <b style="font-size:13px">Read of the board</b>
+          <div style="font-size:12px;color:var(--ink);margin-top:5px;line-height:1.55" id="act-read"></div>
         </div>
         <div class="foot"><span id="act-source">Source: Paragon MLS</span><span>18</span></div>
       </div>
@@ -329,7 +369,7 @@
             <tbody id="pend-tbody"></tbody>
           </table>
         </div>
-        <div class="note" id="sold-note"></div>
+        <div class="note" id="sold-note" style="font-size:11px;color:var(--ink);line-height:1.5"></div>
         <div class="foot"><span id="sold-source">Source: Paragon MLS CMA</span><span>19</span></div>
       </div>
     </div>
@@ -382,7 +422,20 @@
       </div>
     </div>
 
-    <!-- 12 · SELLER NET -->
+    <!-- 22 · BUYER DEMAND (ShowingTime) — hidden if no data -->
+    <div class="page" id="page-demand">
+      <div class="page-content">
+        <div class="kicker">Pricing Strategy</div>
+        <h2 class="pg" id="bd-title">Where the Buyers Are Right Now</h2>
+        <div class="sub" id="bd-sub"></div>
+        <div class="cardbox" id="bd-headline" style="border-left:4px solid var(--burgundy)"></div>
+        <div id="bd-bars" style="margin-top:16px"></div>
+        <div class="linkrow" id="bd-link"></div>
+        <div class="foot"><span id="bd-source">Source: ShowingTime</span><span>22</span></div>
+      </div>
+    </div>
+
+    <!-- 23 · SELLER NET -->
     <div class="page">
       <div class="page-content">
         <div class="kicker">Seller Profit &amp; Loss</div>
@@ -393,7 +446,7 @@
           <tbody id="net-tbody"></tbody>
         </table>
         <div class="note">Estimates only — not a settlement statement. Assumes buyer pays inspections and appraisal. Final figures come from the closing attorney.</div>
-        <div class="foot"><span>Southern Visions Real Estate</span><span>22</span></div>
+        <div class="foot"><span>Southern Visions Real Estate</span><span>23</span></div>
       </div>
     </div>
 
@@ -495,8 +548,11 @@ const DEFAULT_DATA = {
     soldSource: "Sample report — figures are illustrative",
     expiredLesson: "",
     expiredSource: "Sample report — figures are illustrative",
-    timeMoney: ""
-  }
+    timeMoney: "",
+    bracket: ""
+  },
+  // Buyer-demand (ShowingTime) page — hidden entirely when brackets is empty.
+  buyerDemand: { title: "", sub: "", source: "", headline: "", link: "", brackets: [] }
 };
 
 // ================= Load the client's data =================
@@ -587,14 +643,14 @@ function render(d) {
   }
   if (rows.length) {
     const vmin = Math.min(...rows.map(r => r.v)), vmax = Math.max(...rows.map(r => r.v));
-    const step = 450 / rows.length, bw = Math.min(34, step - 10);
+    const step = 450 / rows.length, bw = Math.min(38, step - 8), base = 132;
     $id("m-trend").innerHTML = rows.map((r, i) => {
-      const h = 25 + (vmax > vmin ? 52 * (r.v - vmin) / (vmax - vmin) : 40);
-      const x = 8 + i * step, y = 100 - h;
+      const h = 40 + (vmax > vmin ? 78 * (r.v - vmin) / (vmax - vmin) : 40);
+      const x = 8 + i * step, y = base - h;
       const lab = "$" + Math.round(r.v / 1000) + "k";
-      return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="#7C2230" opacity="${i === rows.length - 1 ? .55 : .85}"/>
-        <text x="${x + bw / 2}" y="${y - 4}" font-size="8" fill="#22262B" text-anchor="middle">${esc(lab)}</text>
-        <text x="${x + bw / 2}" y="110" font-size="8" fill="#6B7076" text-anchor="middle">${esc(r.q)}</text>`;
+      return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="2" fill="#7C2230" opacity="${i === rows.length - 1 ? .55 : .9}"/>
+        <text x="${x + bw / 2}" y="${y - 5}" font-size="10.5" font-weight="bold" fill="#22262B" text-anchor="middle">${esc(lab)}</text>
+        <text x="${x + bw / 2}" y="146" font-size="10.5" fill="#22262B" text-anchor="middle">${esc(r.q)}</text>`;
     }).join("");
   }
 
@@ -604,7 +660,7 @@ function render(d) {
     : `Homes that sell in the first three weeks keep ~99% of asking price. After day 30, sellers give up 4–6% — on a <b style="color:var(--burgundy)">${fmt$(happy)}</b> sale that's <b style="color:var(--burgundy)">${fmt$(happy * .04)}–${fmt$(happy * .06)}</b> of your equity. Pricing right on day one isn't cautious, it's how you protect your net.`;
 
   // Comps tables
-  const noteTd = (x) => `<b>${esc(x.address)}</b>${x.note ? `<br><span style="color:var(--mute)">${esc(x.note)}</span>` : ""}`;
+  const noteTd = (x) => `<b>${esc(x.address)}</b>${x.note ? `<br><span class="compnote">${esc(x.note)}</span>` : ""}`;
   $id("act-tbody").innerHTML = (c.active || []).map(x =>
     `<tr><td>${noteTd(x)}</td><td class="num">${fmt$(x.price)}</td><td class="num">${fmtN(x.sqft)}</td><td class="num">$${psf(x.price, x.sqft)}</td><td class="num">${esc(x.dom)}</td></tr>`).join("") ||
     `<tr><td colspan="5" style="color:var(--mute)">No directly comparable active competition right now — that's leverage.</td></tr>`;
@@ -652,7 +708,33 @@ function render(d) {
   if (closest) why.push(`The closest comp by size — ${esc(closest.address)} — closed at <b>${fmt$(closest.price)}</b>.`);
   why.push(`The <b>${fmt$(t.bottom)}–${fmt$(t.best)}</b> lane is where the buyer activity is.`);
   $id("pr-why").innerHTML = why.map(w => "· " + w).join("<br>");
-  $id("pr-bracket").innerHTML = `Buyers search in brackets. Listing at <b style="color:var(--burgundy)">${fmt$(t.happy)}</b> puts you at the top of one search and the bottom of the next — two buyer pools see the home instead of one.`;
+  const bold = (txt) => esc(txt).replace(/\$[\d,]+(?:\.\d+)?|\d+(?:\.\d+)?%/g, (mm) => `<b style="color:var(--burgundy)">${mm}</b>`);
+  $id("pr-bracket").innerHTML = n.bracket ? bold(n.bracket)
+    : `Buyers search in brackets. Listing at <b style="color:var(--burgundy)">${fmt$(t.happy)}</b> puts you at the top of one search and the bottom of the next — two buyer pools see the home instead of one.`;
+
+  // Buyer-demand (ShowingTime) page
+  const bd = d.buyerDemand;
+  if (bd && bd.brackets && bd.brackets.length) {
+    $id("bd-title").textContent = bd.title || "Where the Buyers Are Right Now";
+    $id("bd-sub").textContent = bd.sub || "";
+    $id("bd-source").textContent = bd.source || "Source: ShowingTime";
+    $id("bd-headline").innerHTML = bd.headline
+      ? `<div style="font-size:14px;line-height:1.55;color:var(--ink)">${bold(bd.headline)}</div>` : "";
+    const mx = Math.max(...bd.brackets.map((b) => num(b.showings)), 1);
+    $id("bd-bars").innerHTML = bd.brackets.map((b) => {
+      const w = num(b.showings) / mx * 100;
+      const col = b.on ? "var(--burgundy)" : "#B9B3AA";
+      return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+        <div style="width:104px;text-align:right;font-size:12.5px;font-weight:700;color:var(--ink)">${esc(b.label)}</div>
+        <div style="flex:1;background:#EFEBE4;border-radius:6px;height:30px"><div style="width:${w}%;background:${col};height:30px;border-radius:6px"></div></div>
+        <div style="width:118px;font-size:11.5px;color:var(--ink)"><b>${fmtN(b.showings)}</b> showings · ${esc(b.pct)}%</div>
+      </div>`;
+    }).join("");
+    setLink("bd-link", bd.link, "View the buyer-activity report");
+  } else {
+    const pd = $id("page-demand");
+    if (pd) pd.remove();
+  }
 
   // Net sheet
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -697,6 +779,12 @@ function render(d) {
 
 // ================= Flipbook =================
 function initBook() {
+// Renumber page footers by actual DOM position, so removing an optional page
+// (e.g. the buyer-demand page) never leaves a wrong number behind.
+document.querySelectorAll("#book > .page").forEach((p, i) => {
+  const spans = p.querySelectorAll(".foot span");
+  if (spans.length) spans[spans.length - 1].textContent = String(i + 1);
+});
 const el = document.getElementById("book");
 const pageFlip = new St.PageFlip(el, {
   width: 550, height: 735,

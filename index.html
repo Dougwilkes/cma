@@ -187,7 +187,26 @@
         <div><label>Expired page — source footer</label><input id="in-nexpsrc" placeholder="Source: Paragon MLS"></div>
       </div>
       <div style="margin-bottom:10px"><label>Expired page — "the lesson" (blank = auto)</label><textarea id="in-nexplesson"></textarea></div>
-      <div><label>Time vs. Money — "what this means for you" (blank = auto). Dollar figures are auto-bolded.</label><textarea id="in-ntimemoney" placeholder="e.g. Homes here that never cut their price sold in a median of 6 days at 100% of original ask; the ones that cut sat 73 days and settled for 94% — an average markdown of $14,892."></textarea></div>
+      <div style="margin-bottom:10px"><label>Time vs. Money — "what this means for you" (blank = auto). Dollar figures are auto-bolded.</label><textarea id="in-ntimemoney" placeholder="e.g. Homes here that never cut their price sold in a median of 6 days at 100% of original ask; the ones that cut sat 73 days and settled for 94% — an average markdown of $14,892."></textarea></div>
+      <div><label>Price-range page — "price bracketing" text (blank = auto). $ and % figures auto-bolded.</label><textarea id="in-nbracket" placeholder="e.g. List at $275,000 and your home shows to buyers searching the $250–275K bracket AND the $275–300K bracket — 76.81% of everyone shopping this range right now."></textarea></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Buyer Demand (ShowingTime) — optional page</legend>
+      <div class="hint" style="margin-bottom:8px">Fill this to add a "Where the Buyers Are" page with a bar chart of showing activity by price bracket. Leave the brackets box empty to skip the page entirely.</div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Page title</label><input id="in-bd-title" placeholder="Where the Buyers Are Right Now"></div>
+        <div><label>Subtitle</label><input id="in-bd-sub" placeholder="Showings scheduled, last 30 days · zip 29212 · 3+ beds"></div>
+      </div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Source (footer)</label><input id="in-bd-source" placeholder="Source: ShowingTime, pulled 7/29/26"></div>
+        <div><label>Report link (optional)</label><input id="in-bd-link" placeholder="https://..."></div>
+      </div>
+      <div style="margin-bottom:10px"><label>Headline callout ($ and % auto-bolded)</label><textarea id="in-bd-headline" placeholder="Listing at $275,000 puts your home in front of 76.81% of active buyers in this price range."></textarea></div>
+      <div><label>Brackets — one per line: Label | # showings | % | highlight(y/n)</label><textarea id="in-bd-brackets" rows="5" placeholder="$250K–$275K | 41 | 29.71 | y
+$275K–$300K | 65 | 47.10 | y
+$300K–$325K | 17 | 12.32 | n
+$325K+ | 15 | 10.87 | n"></textarea></div>
     </fieldset>
 
     <div class="row">
@@ -230,7 +249,8 @@ const BLANK = () => ({
   },
   comps: { active: [], pending: [], sold: [], expired: [] },
   links: { active: "", pending: "", sold: "", expired: "", market: "" },
-  narrative: { activeSub: "", activeRead: "", activeSource: "", soldSource: "", expiredLesson: "", expiredSource: "", timeMoney: "" }
+  narrative: { activeSub: "", activeRead: "", activeSource: "", soldSource: "", expiredLesson: "", expiredSource: "", timeMoney: "", bracket: "" },
+  buyerDemand: { title: "", sub: "", source: "", headline: "", link: "", brackets: [] }
 });
 const LINK_KEYS = ["active", "pending", "sold", "expired", "market"];
 
@@ -359,6 +379,12 @@ function fillForm(d) {
   $("in-nactsub").value = n.activeSub || ""; $("in-nactsrc").value = n.activeSource || ""; $("in-nactread").value = n.activeRead || "";
   $("in-nsoldsrc").value = n.soldSource || ""; $("in-nexpsrc").value = n.expiredSource || ""; $("in-nexplesson").value = n.expiredLesson || "";
   $("in-ntimemoney").value = n.timeMoney || "";
+  $("in-nbracket").value = n.bracket || "";
+  const bd = d.buyerDemand || {};
+  $("in-bd-title").value = bd.title || ""; $("in-bd-sub").value = bd.sub || "";
+  $("in-bd-source").value = bd.source || ""; $("in-bd-link").value = bd.link || "";
+  $("in-bd-headline").value = bd.headline || "";
+  $("in-bd-brackets").value = (bd.brackets || []).map(b => `${b.label} | ${b.showings} | ${b.pct} | ${b.on ? "y" : "n"}`).join("\n");
   for (const def of COMP_DEFS) {
     $("rows-" + def.key).innerHTML = "";
     (d.comps[def.key] || []).forEach(row => addCompRow(def.key, row));
@@ -394,6 +420,16 @@ function readForm() {
   n.activeSub = $("in-nactsub").value.trim(); n.activeSource = $("in-nactsrc").value.trim(); n.activeRead = $("in-nactread").value.trim();
   n.soldSource = $("in-nsoldsrc").value.trim(); n.expiredSource = $("in-nexpsrc").value.trim(); n.expiredLesson = $("in-nexplesson").value.trim();
   n.timeMoney = $("in-ntimemoney").value.trim();
+  n.bracket = $("in-nbracket").value.trim();
+  d.buyerDemand = {
+    title: $("in-bd-title").value.trim(), sub: $("in-bd-sub").value.trim(),
+    source: $("in-bd-source").value.trim(), link: $("in-bd-link").value.trim(),
+    headline: $("in-bd-headline").value.trim(),
+    brackets: $("in-bd-brackets").value.split("\n").map(l => l.trim()).filter(Boolean).map(l => {
+      const [label = "", showings = "", pct = "", on = ""] = l.split("|").map(x => x.trim());
+      return { label, showings: Number(showings) || 0, pct, on: /^y/i.test(on) };
+    }).filter(b => b.label)
+  };
   d.comps = collectComps();
   return d;
 }

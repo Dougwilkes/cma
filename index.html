@@ -140,11 +140,11 @@
     </fieldset>
 
     <fieldset>
-      <legend>Pricing Tiers</legend>
+      <legend>Pricing by Condition</legend>
       <div class="grid g3">
-        <div><label>Bottom — fast-sale floor $</label><input id="in-bottom" type="number"></div>
-        <div><label>Happy — most likely $</label><input id="in-happy" type="number"></div>
-        <div><label>Best — top of market $</label><input id="in-best" type="number"></div>
+        <div><label>Good Condition — sell as-is $</label><input id="in-bottom" type="number"></div>
+        <div><label>Great Condition — light updates $</label><input id="in-happy" type="number"></div>
+        <div><label>Updated — fully renovated $</label><input id="in-best" type="number"></div>
       </div>
     </fieldset>
 
@@ -178,9 +178,13 @@
         <div><label>Trend chart title</label><input id="in-mtrendtitle"></div>
       </div>
       <div style="margin-bottom:10px"><label>KPI tiles — one per line: Label | Value | Sub</label><textarea id="in-mkpis" rows="6"></textarea></div>
+      <div class="grid g2" style="margin-bottom:10px">
+        <div><label>Trend bars (price) — one per line: Label=Value</label><textarea id="in-mtrend" rows="6"></textarea></div>
+        <div><label>Trend line (sales volume) — same labels, one per line: Label=Count. Optional — overlays a volume line on the price bars.</label><textarea id="in-mtrendvol" rows="6"></textarea></div>
+      </div>
       <div class="grid g2">
-        <div><label>Trend bars — one per line: Label=Value</label><textarea id="in-mtrend" rows="6"></textarea></div>
         <div><label>Caveat / fine print under the chart</label><textarea id="in-mcaveat" rows="6"></textarea></div>
+        <div><label>Time vs. Money chart — one per line: Bucket=Pct,SampleSize (e.g. 0-5=100.0,68). Optional — replaces the illustrative chart with your real DOM data.</label><textarea id="in-mdombuckets" rows="6"></textarea></div>
       </div>
     </fieldset>
 
@@ -254,7 +258,7 @@ const BLANK = () => ({
       { label: "Sold-to-list", value: "", sub: "" },
       { label: "Took a price cut", value: "", sub: "" }
     ],
-    trend: "", caveat: ""
+    trend: "", trendVolume: "", domBuckets: "", caveat: ""
   },
   comps: { active: [], pending: [], sold: [], expired: [] },
   links: { active: "", pending: "", sold: "", expired: "", market: "" },
@@ -382,6 +386,7 @@ function fillForm(d) {
   $("in-mtitle").value = m.title || ""; $("in-msub").value = m.sub || ""; $("in-msource").value = m.source || ""; $("in-mtrendtitle").value = m.trendTitle || "";
   $("in-mkpis").value = (m.kpis || []).map(k => `${k.label} | ${k.value} | ${k.sub}`).join("\n");
   $("in-mtrend").value = m.trend || ""; $("in-mcaveat").value = m.caveat || "";
+  $("in-mtrendvol").value = m.trendVolume || ""; $("in-mdombuckets").value = m.domBuckets || "";
   const lk = d.links || {};
   LINK_KEYS.forEach(k => { $("in-lk-" + k).value = lk[k] || ""; });
   const n = d.narrative || {};
@@ -424,6 +429,7 @@ function readForm() {
     return { label, value, sub };
   }).filter(k => k.label && k.value);
   m.trend = $("in-mtrend").value.trim(); m.caveat = $("in-mcaveat").value.trim();
+  m.trendVolume = $("in-mtrendvol").value.trim(); m.domBuckets = $("in-mdombuckets").value.trim();
   LINK_KEYS.forEach(k => { d.links[k] = $("in-lk-" + k).value.trim(); });
   const n = d.narrative;
   n.activeSub = $("in-nactsub").value.trim(); n.activeSource = $("in-nactsrc").value.trim(); n.activeRead = $("in-nactread").value.trim();

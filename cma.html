@@ -65,7 +65,7 @@
   .fact{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 10px;text-align:center}
   .fact .v{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--burgundy)}
   .fact .l{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-top:2px}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:10px}
   .kpi{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:16px 12px}
   .kpi .v{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1}
   .kpi .l{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);font-weight:700;margin-top:6px}
@@ -131,7 +131,7 @@
           <li><span class="n">2</span><div><b>Our Playbook</b><span class="d">Fiduciary duties · commitments · marketing plan · listing process · no-risk program</span></div></li>
           <li><span class="n">3</span><div><b>The Subject Property &amp; Market Snapshot</b><span class="d" id="ag-sub2">Your property · your market, last 24 months</span></div></li>
           <li><span class="n">4</span><div><b>Time vs. Money &amp; The Competition</b><span class="d">Active, pending, sold &amp; expired listings around you</span></div></li>
-          <li><span class="n">5</span><div><b>Data-Suggested Price Range &amp; Seller Net Sheet</b><span class="d">Bottom · Happy · Best tiers — and what you walk away with</span></div></li>
+          <li><span class="n">5</span><div><b>Data-Suggested Price Range &amp; Seller Net Sheet</b><span class="d">Good · Great · Updated condition tiers — and what you walk away with</span></div></li>
         </ul>
         <div class="foot"><span>Southern Visions Real Estate</span><span>2</span></div>
       </div>
@@ -207,10 +207,14 @@
     <div class="page imgpage"><img src="assets/resume-p03.jpg" alt="Fiduciary Duties"></div>
     <div class="page imgpage"><img src="assets/resume-p04.jpg" alt="My Commitments to You"></div>
     <div class="page imgpage"><img src="assets/resume-p06.jpg" alt="Southern Visions Real Estate Resume — Neighborhoods Developed"></div>
-    <div class="page imgpage"><img src="assets/resume-p08.jpg" alt="Photography — professional photos sell 32% faster"></div>
+    <!-- The Listing Process spans steps 1-6 and 7-15; these two pages must land on the
+         same left-right spread. With 4 front-matter pages (cover/agenda/Doug/Team) and
+         showCover:true, that requires this page to fall at an EVEN absolute position --
+         currently position 8, pairing with position 9. If pages are added/removed above
+         this point, re-check that parity or the spread will split apart. -->
     <div class="page imgpage"><img src="assets/resume-p09.jpg" alt="The Listing Process — steps 1-6"></div>
     <div class="page imgpage"><img src="assets/resume-p10.jpg" alt="The Listing Process — steps 7-15"></div>
-    <div class="page imgpage"><img src="assets/resume-p11.jpg" alt="Marketing Plan of Action"></div>
+    <div class="page imgpage"><img src="assets/resume-p08.jpg" alt="Photography — professional photos sell 32% faster"></div>
 
     <!-- COMPENSATION IN PLAIN TERMS -->
     <div class="page">
@@ -274,12 +278,15 @@
       <div class="page-content">
         <div class="kicker">Market Snapshot</div>
         <h2 class="pg" id="m-title">Sample Market — Last 24 Months</h2>
-        <div class="sub" id="m-sub"></div>
+        <div class="sub" id="m-sub" style="margin-bottom:10px"></div>
         <div class="kpis" id="m-kpis"></div>
-        <div class="cardbox">
-          <b style="font-size:12.5px" id="m-trend-title">Median sold price by quarter</b>
-          <svg id="m-trend" viewBox="0 0 460 150" style="width:100%;margin-top:8px"></svg>
-          <div class="note" id="m-caveat" style="margin-top:2px;font-size:11px;line-height:1.5;color:var(--ink)"></div>
+        <div class="cardbox" style="padding:10px 12px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between">
+            <b style="font-size:12.5px" id="m-trend-title">Median sold price by quarter</b>
+            <span id="m-trend-legend" style="font-size:9px;color:var(--mute)"></span>
+          </div>
+          <svg id="m-trend" viewBox="0 0 460 150" style="width:100%;margin-top:6px"></svg>
+          <div class="note" id="m-caveat" style="margin-top:0;font-size:10.5px;line-height:1.45;color:var(--ink)"></div>
         </div>
         <div class="linkrow" id="m-link"></div>
         <div class="foot"><span id="m-source">Source: Paragon MLS</span><span>16</span></div>
@@ -293,8 +300,8 @@
         <h2 class="pg">Time vs. Money</h2>
         <div class="sub">The amount of time it takes to accept an offer directly correlates to your net proceeds.</div>
         <div class="cardbox">
-          <b style="font-size:11px">Sold price as % of list price, by days on market</b>
-          <svg viewBox="0 0 460 150" style="width:100%;margin-top:8px">
+          <b style="font-size:11px">Sold price as % of original list price, by days on market</b>
+          <svg id="tvm-chart" viewBox="0 0 460 150" style="width:100%;margin-top:8px">
             <g stroke="#E5E0D8" stroke-width="1">
               <line x1="40" y1="15"  x2="450" y2="15"/><line x1="40" y1="55" x2="450" y2="55"/>
               <line x1="40" y1="95"  x2="450" y2="95"/><line x1="40" y1="135" x2="450" y2="135"/>
@@ -397,11 +404,11 @@
       <div class="page-content">
         <div class="kicker">Pricing Strategy</div>
         <h2 class="pg">Data-Suggested Price Range</h2>
-        <div class="sub" id="pr-sub">Where the evidence puts your home</div>
+        <div class="sub" id="pr-sub">Where the evidence puts your home — by condition at the time of listing</div>
         <div class="tiers">
-          <div class="tier" style="background:#8A8F98"><div class="l">Bottom</div><div class="v" id="t-bottom">—</div><div class="d">Fast-sale floor</div></div>
-          <div class="tier" style="background:var(--burgundy)"><div class="l">Happy</div><div class="v" id="t-happy">—</div><div class="d">Most likely outcome</div></div>
-          <div class="tier" style="background:var(--gold)"><div class="l">Best</div><div class="v" id="t-best">—</div><div class="d">Top of the market</div></div>
+          <div class="tier" style="background:#8A8F98"><div class="l">Good Condition</div><div class="v" id="t-bottom">—</div><div class="d">Sell as-is, no prep</div></div>
+          <div class="tier" style="background:var(--burgundy)"><div class="l">Great Condition</div><div class="v" id="t-happy">—</div><div class="d">Light updates &amp; staging</div></div>
+          <div class="tier" style="background:var(--gold)"><div class="l">Updated</div><div class="v" id="t-best">—</div><div class="d">Fully updated / renovated</div></div>
         </div>
         <div class="cardbox">
           <b style="font-size:12px">Why this range holds up</b>
@@ -509,6 +516,8 @@ const DEFAULT_DATA = {
       { label: "Took a price cut", value: "41%", sub: "before selling" }
     ],
     trend: "Q1=246000\nQ2=252000\nQ3=249000\nQ4=255000\nQ5=258000\nQ6=254000\nQ7=260000\nQ8=257000",
+    trendVolume: "Q1=12\nQ2=15\nQ3=18\nQ4=14\nQ5=20\nQ6=17\nQ7=22\nQ8=19",
+    domBuckets: "0-5=99,20\n6-10=99,10\n11-20=99,8\n21-30=96,7\n31-45=94,6\n46-99=95,5\n100+=95,4",
     caveat: "Sample report. Figures on this page are illustrative only — your report draws its numbers directly from the MLS for your zip code and price band."
   },
   comps: {
@@ -636,8 +645,8 @@ function render(d) {
   }
   if (rows.length) {
     const vmin = Math.min(...rows.map(r => r.v)), vmax = Math.max(...rows.map(r => r.v));
-    const step = 450 / rows.length, bw = Math.min(38, step - 8), base = 132;
-    $id("m-trend").innerHTML = rows.map((r, i) => {
+    const step = 450 / rows.length, bw = Math.min(38, step - 8), base = 132, top = 15;
+    let html = rows.map((r, i) => {
       const h = 40 + (vmax > vmin ? 78 * (r.v - vmin) / (vmax - vmin) : 40);
       const x = 8 + i * step, y = base - h;
       const lab = "$" + Math.round(r.v / 1000) + "k";
@@ -645,12 +654,63 @@ function render(d) {
         <text x="${x + bw / 2}" y="${y - 5}" font-size="10.5" font-weight="bold" fill="#22262B" text-anchor="middle">${esc(lab)}</text>
         <text x="${x + bw / 2}" y="146" font-size="10.5" fill="#22262B" text-anchor="middle">${esc(r.q)}</text>`;
     }).join("");
+
+    // Optional sales-volume line, overlaid on the same quarters so price and
+    // volume can be read together. Only drawn when the counts line up 1:1
+    // with the price quarters above.
+    const volRows = String(m.trendVolume || "").split("\n").map(l => l.trim()).filter(Boolean)
+      .map(l => { const i = l.lastIndexOf("="); return { q: l.slice(0, i).trim(), v: num(l.slice(i + 1)) }; })
+      .filter(r => r.q && r.v > 0);
+    if (volRows.length === rows.length) {
+      const vmin2 = Math.min(...volRows.map(r => r.v)), vmax2 = Math.max(...volRows.map(r => r.v));
+      const y2 = (v) => top + (base - top) * (1 - (vmax2 > vmin2 ? (v - vmin2) / (vmax2 - vmin2) : 0.5));
+      const pts = rows.map((r, i) => `${8 + i * step + bw / 2},${y2(volRows[i].v)}`).join(" ");
+      const dots = rows.map((r, i) => {
+        const x = 8 + i * step + bw / 2, yy = y2(volRows[i].v);
+        return `<circle cx="${x}" cy="${yy}" r="3" fill="#22262B"/>` +
+          `<text x="${x + 6}" y="${yy + 3}" font-size="7.5" fill="#22262B" text-anchor="start">${volRows[i].v}</text>`;
+      }).join("");
+      html += `<polyline fill="none" stroke="#22262B" stroke-width="1.75" stroke-dasharray="3,2" points="${pts}"/>` + dots;
+      $id("m-trend-legend").innerHTML = `<span style="color:#7C2230">■</span> Median price (bars) &nbsp; <span style="color:#22262B">●┈</span> Sales volume (line)`;
+    } else {
+      $id("m-trend-legend").textContent = "";
+    }
+    $id("m-trend").innerHTML = html;
   }
 
   // Time vs money
   const happy = num(t.happy);
   $id("tvm-note").innerHTML = n.timeMoney ? esc(n.timeMoney).replace(/\$[\d,]+/g, (mm) => `<b style="color:var(--burgundy)">${mm}</b>`)
     : `Homes that sell in the first three weeks keep ~99% of asking price. After day 30, sellers give up 4–6% — on a <b style="color:var(--burgundy)">${fmt$(happy)}</b> sale that's <b style="color:var(--burgundy)">${fmt$(happy * .04)}–${fmt$(happy * .06)}</b> of your equity. Pricing right on day one isn't cautious, it's how you protect your net.`;
+
+  // Real DOM-bucket data replaces the static illustrative chart when supplied
+  // (Label=Pct,N per line, e.g. "0-5=100.0,68"). Left blank, the static
+  // markup already in the HTML keeps showing.
+  const tvmBuckets = String(m.domBuckets || "").split("\n").map(l => l.trim()).filter(Boolean)
+    .map(l => { const i = l.lastIndexOf("="); const [pct, cnt] = l.slice(i + 1).split(","); return { label: l.slice(0, i).trim(), pct: num(pct), n: num(cnt) }; })
+    .filter(b => b.label && b.pct !== 0);
+  if (tvmBuckets.length) {
+    const W = 460, H = 150, padL = 40, padR = 10, padT = 15, padB = 25;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const vals = tvmBuckets.map(b => b.pct);
+    const lo = Math.floor(Math.min(...vals) - 2), hi = Math.ceil(Math.max(...vals) + 2);
+    const y = (v) => padT + plotH * (1 - (v - lo) / (hi - lo || 1));
+    const step = plotW / (tvmBuckets.length - 1 || 1);
+    const x = (i) => padL + i * step;
+    let html = "";
+    for (let i = 0; i < 4; i++) {
+      const v = lo + (hi - lo) * i / 3, yy = y(v);
+      html += `<line x1="${padL}" y1="${yy}" x2="${W - padR}" y2="${yy}" stroke="#E5E0D8"/>`;
+      html += `<text x="${padL - 4}" y="${yy + 3}" font-size="8" fill="#6B7076" text-anchor="end">${Math.round(v)}%</text>`;
+    }
+    html += `<polyline fill="none" stroke="#7C2230" stroke-width="2.5" points="${tvmBuckets.map((b, i) => `${x(i)},${y(b.pct)}`).join(" ")}"/>`;
+    tvmBuckets.forEach((b, i) => {
+      html += `<circle cx="${x(i)}" cy="${y(b.pct)}" r="3.5" fill="#7C2230"/>`;
+      html += `<text x="${x(i)}" y="${y(b.pct) - 8}" font-size="8.5" font-weight="bold" fill="#22262B" text-anchor="middle">${b.pct}%</text>`;
+      html += `<text x="${x(i)}" y="${H - 6}" font-size="8" fill="#22262B" text-anchor="middle">${esc(b.label)}</text>`;
+    });
+    $id("tvm-chart").innerHTML = html;
+  }
 
   // Comps tables
   const noteTd = (x) => `<b>${esc(x.address)}</b>${x.note ? `<br><span class="compnote">${esc(x.note)}</span>` : ""}`;
@@ -738,8 +798,8 @@ function render(d) {
   const days = close ? Math.max(0, (12 - cm) * 30 + (31 - cd)) : 0;
   const mos = days / 30;
   const proLabel = Number.isInteger(mos) ? `${mos} mo` : `${days} days`;
-  $id("net-sub").textContent = `Estimated proceeds at each tier · close ${close ? close.toLocaleDateString("en-US") : "TBD"} · taxes, insurance & HOA prorated ${proLabel} to year-end (360-day year) · payoff ${fmt$(s.payoff)}`;
-  const tierDefs = [["Bottom", num(t.bottom)], ["Happy", num(t.happy)], ["Best", num(t.best)]];
+  $id("net-sub").textContent = `Estimated proceeds by condition at listing · close ${close ? close.toLocaleDateString("en-US") : "TBD"} · taxes, insurance & HOA prorated ${proLabel} to year-end (360-day year) · payoff ${fmt$(s.payoff)}`;
+  const tierDefs = [["Good Condition", num(t.bottom)], ["Great Condition", num(t.happy)], ["Updated", num(t.best)]];
   $id("net-head").innerHTML = "<th></th>" + tierDefs.map(([l, p]) => `<th class="num">${l}<br>${fmt$(p)}</th>`).join("");
   const rowsDef = [
     ["Mortgage payoff", () => -num(s.payoff)],
@@ -770,7 +830,7 @@ function render(d) {
 
   // Closing summary
   const weeks = medDom ? (medDom <= 24 ? "about three weeks" : `about ${Math.round(medDom / 7)} weeks`) : "weeks, not months";
-  $id("close-summary").innerHTML = `The data says ${esc(s.street)} can sell in the <b style="color:var(--burgundy)">${fmt$(t.bottom)}–${fmt$(t.best)}</b> range, most likely near <b style="color:var(--burgundy)">${fmt$(t.happy)}</b>, netting you roughly <b style="color:var(--burgundy)">${fmt$(nets[1])}</b> — in ${weeks} if we respect the market on day one.`;
+  $id("close-summary").innerHTML = `The data says ${esc(s.street)} can sell in the <b style="color:var(--burgundy)">${fmt$(t.bottom)}–${fmt$(t.best)}</b> range depending on condition at listing — <b style="color:var(--burgundy)">${fmt$(t.happy)}</b> with light updates and staging, netting you roughly <b style="color:var(--burgundy)">${fmt$(nets[1])}</b> — in ${weeks} if we respect the market on day one.`;
 
   document.title = `CMA — ${s.street} | Southern Visions Real Estate`;
 }
